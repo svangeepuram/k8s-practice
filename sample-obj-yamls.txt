@@ -117,6 +117,21 @@ spec:
     emptyDir: {}
     
     
+    apiVersion: v1
+kind: Pod
+metadata:
+  name: onspecificnode
+spec:
+  containers:
+  - name: sise
+    image: quay.io/openshiftlabs/simpleservice:0.5.0
+    ports:
+    - containerPort: 9876
+  nodeSelector:
+    shouldrun: here
+    
+    
+    
     apiVersion: apps/v1
 kind: Deployment
 metadata:
