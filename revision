@@ -1,0 +1,571 @@
+alias k=kubectl
+k version --short
+
+
+export do="--dry-run=client -o yaml"
+# then we can run
+Create Pod YAML
+k run redis --image=redis:alpine -l tier=db
+k run pod1 --image=nginx $do
+k run pod1 \
+    -oyaml \
+    --dry-run=client \
+    --image=busybox \
+    --requests "cpu=100m,memory=256Mi" \
+    --limits "cpu=200m,memory=512Mi" \
+    --command \
+    -- sh -c "sleep 1d"
+
+k get pods -o wide
+kubectl delete pod webapp
+k edit pod podname #edit image name
+kubectl run httpd --image=httpd:alpine --port=80 --expose
+
+Replicasets
+create replicaset
+k create deploy deploy1 --image=busybox --dry-run=client -o yaml  > deploy1.yaml
+change kind from deployment to ReplicaSet and remove strategy, resources, status
+k get rs --all-namespaces
+kubectl edit replicaset new-replica-set
+k scale rs rsname --replicas=4
+
+Create Deployment YAML
+k create deploy deploy1 --image=nginx -oyaml --dry-run=client > dep.yaml
+k create deploy deploy1 --image=nginx 
+
+# generate pod yaml and append to same file
+k run deploy1 \
+    -oyaml \
+    --dry-run=client \
+    --image=busybox \
+    --requests "cpu=100m,memory=256Mi" \
+    --limits "cpu=200m,memory=512Mi" \
+    --command \
+    -- sh -c "sleep 1d" >> deploy1.yaml
+    
+k set image deploy deployname contname=nginx:1.17
+k set image deploy deployname contname=nginx:1.17 --record
+
+ROllout & rollbacks
+k rollout status deploy myyapp
+k rollout history deploy myyapp
+k rollout undo deploy myyapp
+
+ 
+Namespaces
+kubectl get ns
+kubectl create ns nsname
+kubectl get pods -n nsname
+kubectl get pods --namespaces=nsname
+kubectl get pods --all-namespaces
+ 
+create resource quota to limit resources for a namespaces
+
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: mem-cpu-demo
+  namespace: test-namespace
+spec:
+  hard:
+    requests.cpu: "1"
+    requests.memory: 1Gi
+    limits.cpu: "2"
+    limits.memory: 2Gi
+
+services
+
+nodeport
+1. kubectl expose pod simple-webapp-pod --name=webapp-service --target-port=8080 --port=8080 --type=NodePort | kubectl edit svc webapp-service 
+edit the nodePort
+
+2. kubectl create service nodeport <service-name> --tcp port:targertPort --node-port <30000-32767> | kubectl edit svc webapp-service 
+add selectors
+
+curl http://nodeip:nodePORT
+
+clusterIP
+
+kubectl expose pod nginx --name=tesst --port=80 --target-port=8080
+kubectl create service clusterip <service-name> --tcp port:targertPort
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-service
+spec:
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 9376
+
+access the service using clusterIP or svc name
+
+Create a pod and create svc with clusterIP(default)
+kubectl run httpd --image=httpd:alpine --port=80 --expose
+
+Loadbalancer
+
+kubectl expose pod nginx  --port=8765 --target-port=9376 --name=example-service --type=LoadBalancer 
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: example-service
+spec:
+  selector:
+    app: example
+  ports:
+    - port: 8765
+      targetPort: 9376
+  type: LoadBalancer
+
+access the service using external IP of svc
+
+get endpoints of svc
+k get ep
+
+
+Create a Job YAML
+k create job job1 -oyaml --dry-run=client --image=busybox
+
+k create job job1 -oyaml --image=busybox --dry-run=client > job1.yaml
+# we create a pod to copy yaml from
+k run job1 \
+    -oyaml \
+    --dry-run=client \
+    --image=busybox \
+    --requests "cpu=100m,memory=256Mi" \
+    --limits "cpu=200m,memory=512Mi" \
+    --command \
+    -- sh -c "sleep 1d" >> job1.yaml
+
+Create CronJob YAML
+k create cj cj1 -oyaml --dry-run=client --schedule="* * * * *" --image=busybox
+
+# we create the cronjob yaml
+k create cj cj1 -oyaml --dry-run=client --schedule="* * * * *" --image=busybox > cj1.yaml
+# now the pod yaml
+k run cj1 \
+    -oyaml \
+    --dry-run=client \
+    --image=busybox \
+    --requests "cpu=100m,memory=256Mi" \
+    --limits "cpu=200m,memory=512Mi" \
+    --command \
+    -- sh -c "sleep 1d" >> cj1.yaml
+    
+Execute command in a temporary pod
+k run tmp --restart=Never  --image=busybox:1.28 --rm -i -- wget -O- google.com
+k run tmp --restart=Never  --image=busybox:1.28 --rm -it -- sh
+nc -z -v -w 2 np-test-service:80 # test a svc 
+create daemon set
+k create deploy deploy1 -oyaml --image=busybox --dry-run=client > deploy1.yaml
+change kind from deployment to daemon set and remove replicas,strategy, resources, status
+
+check for control plan components
+kubectl get pods -n kube-system
+
+Manual scheduling
+edit yaml under spec --> nodeName: node01
+pod def file 
+spec:
+  nodeName: node01
+
+labels & selectors
+
+kubectl label pods my-pod new-label=awesome   
+kubectl get pods --show-labels
+kubectl get pods -l bu=finance
+kubectl get pods -l bu=finance,env=prod
+kubectl get pods -l env=dev --no-headers | wc -l
+
+Taint node
+kubectl describe node node01 | grep -i taint 
+kubectl taint node node-name key=value:taint:NoSchedule
+kubectl taint node node-name key=value:taint:NoExecute
+kubectl taint node node-name key=value:taint:PreferNoSchedule
+kubectl taint node master node-role.kubernetes.io/master:NoSchedule
+
+untaint
+kubectl taint node node01 spray=martein:NoSchedule-
+
+Tolerations in pod
+  tolerations:
+  - key: "example-key"
+    operator: "Exists"
+    effect: "NoSchedule"
+  tolerations:
+  - key: "key1"
+    operator: "Equal"
+    value: "value1"
+    effect: "NoSchedule"
+    
+nodeselector
+label nodes
+k label node node01 size=large
+edit yaml under spec --> 
+nodeSelector
+  size: large
+  
+Node affinity 
+affinity:
+    podAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchExpressions:
+          - key: security
+            operator: In
+            values:
+            - S1
+
+
+resources & requirements
+k run pod1 \
+    -oyaml \
+    --dry-run=client \
+    --image=busybox \
+    --requests "cpu=100m,memory=256Mi" \
+    --limits "cpu=200m,memory=512Mi" \
+
+yaml
+
+    resources:
+      requests:
+        memory: "64Mi"
+        cpu: "250m"
+      limits:
+        memory: "128Mi"
+        cpu: "500m"
+        
+Static pod
+
+find static pod path
+ssh into node using internalIP of the node --->   ps -aux | grep kubelet | grep "config"
+or
+ssh into node using internalIP of the node ---> systemctl status kubelet
+
+look into --config file path ----> grep -i static /var/lib/kubelet/config.yaml ----> get staticPodPath ---> cd path
+
+
+create static pod
+
+kubectl run static-busybox --image=nginx --command sleep 1000 --restart=Never --dry-run=client -o yaml > staticPodPath/staticpod.yaml
+(need not use kubectl create )
+Edit the yaml file to edit the pod
+Remove the yaml file to delete the pod.
+
+Multiple schedulers
+
+cp /etc/kubernetes/manifests/kube-scheduler.yaml /etc/kubernetes/manifests/kube-scheduler-custom.yaml
+vi /etc/kubernetes/manifests/kube-scheduler-custom.yaml
+change --lead-elect=false
+add --scheduler-name= my-scheduler
+kubectl create -f kube-scheduler-custom.yaml
+
+edit pod yaml under spec --> 
+schedulerName: my-scheduler
+
+Monitoring pods & nodes
+kubectl top node
+kubectl top pod 
+
+Application logs
+kubectl  logs webapp-2 
+kubectl  logs webapp-2 -c simple-webapp
+kubectl  logs webapp-2 -f --> watch as they are created
+kubectl  logs webapp-2 --previous --> view the logs of a previous pod.
+
+
+create cm
+kubectl create configmap config --from-literal=foo=lala --from-literal=foo2=lolo
+kubectl create cm config2 --from-file=config.txt
+kubectl create cm config3 --from-env-file=config.env
+
+usage:
+envFrom:
+      - configMapRef:
+          name: special-config
+env:
+- name: SPECIAL_LEVEL_KEY
+  valueFrom:
+    configMapKeyRef:
+      name: special-config
+      key: special.how
+volumes:
+    - name: config-volume
+      configMap:
+        name: special-config
+        items:
+        - key: SPECIAL_LEVEL
+          path: keys
+volumes:
+  - name: foo
+    configMap:
+      name: myconfigmap
+
+
+secret
+
+create secret
+kubectl create secret generic secretname --from-literal=passoword=pass
+kubectl create secret generic secretname --from-file=username.txt
+
+kubectl create secret generic db-secret
+--from-literal=DB_Host=sql01 --from-literal=DB_User=root --from-literal=DB_Password=password123
+
+usage
+
+- name: SECRET_USERNAME
+        valueFrom:
+          secretKeyRef:
+            name: mysecret
+            key: username
+envFrom:
+      - secretRef:
+          name: mysecret
+volumes:
+  - name: foo
+    secret:
+      secretName: mysecret
+      
+ volumes:
+  - name: foo
+    secret:
+      secretName: mysecret
+      items:
+      - key: username
+        path: my-group/my-username
+
+initContainers
+
+initContainers:
+  - name: init-myservice
+    image: busybox:1.28
+    command: ['sh', '-c', 'until nslookup myservice; do echo waiting for myservice; sleep 2; done;']
+  - name: init-mydb
+    image: busybox:1.28
+    command: ['sh', '-c', 'until nslookup mydb; do echo waiting for mydb; sleep 2; done;']
+
+os upgrade 
+
+kubectl drain node01 --ignore-daemonsets --force
+kubectl uncordon node01
+kubectl cordon node03
+
+cluster upgrade(kubeadm)
+Master node
+1.kubectl drain master --ignore-daemonsets 
+kubeadm version(optional)
+2.apt update
+3.apt install kubeadm=1.19.0-00
+kubeadm upgrade plan (optional)
+4.kubeadm upgrade apply v1.19.0 
+5.apt install kubelet=1.19.0-00 
+6.kubectl uncordon master
+
+worker node
+kubectl drain node01 --ignore-daemonsets --force
+1.ssh node01
+2.apt update
+3.apt install kubeadm=1.18.0-00
+3.kubeadm upgrade node
+4.apt install kubelet=1.18.0-00
+exit the node
+5.kubectl uncordon node01
+
+ETCD backup & restore
+
+etcdctl version
+
+
+kubectl describe pod etcd-master -n kube-system -->look for image name for version, cacert,key,cert,--listen-client-urls
+
+etcdctl snapshot save --help
+1.ETCDCTL_API=3 etcdctl  snapshot  save  /tmp/snapshot-pre-boot.db --endpoints=https://[127.0.0.1]:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt
+--cert=/etc/kubernetes/pki/etcd/server.crt --key=/etc/kubernetes/pki/etcd/server.key 
+
+ETCDCTL_API=3 etcdctl snapshot status /tmp/snapshot-pre-boot.db --endpoints=https://[127.0.0.1]:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt
+--cert=/etc/kubernetes/pki/etcd/server.crt --key=/etc/kubernetes/pki/etcd/server.key -w table
+
+ETCDCTL_API=3 etcdctl snapshot restore -h 
+1.ETCDCTL_API=3 etcdctl --endpoints=https://[127.0.0.1]:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt \
+     --name=master \
+     --cert=/etc/kubernetes/pki/etcd/server.crt --key=/etc/kubernetes/pki/etcd/server.key \
+     --data-dir /var/lib/etcd-from-backup \
+     --initial-cluster=master=https://127.0.0.1:2380 \
+     --initial-cluster-token=etcd-cluster-1 \
+     --initial-advertise-peer-urls=https://127.0.0.1:2380 \
+     snapshot restore /tmp/snapshot-pre-boot.db
+2.Update --data-dir to use new target location
+
+--data-dir=/var/lib/etcd-from-backup
+Update new initial-cluster-token to specify new cluster
+
+--initial-cluster-token=etcd-cluster-1
+3.Update volumes and volume mounts to point to new path
+
+view certificate details
+Get the path from component's manifests file in /etc/kubernetes/manifests
+openssl x509 -in file-path.crt -text 
+openssl x509 -in /etc/kubernetes/pki/etcd/server.crt -text
+openssl x509 -in /etc/kubernetes/pki/apiserver.crt -text
+
+Certificate APIs 
+kubectl get csr
+kubectl certificate approve jane
+kubectl certificate deny agent-smith
+kubectl delete csr agent-smith
+
+Kubeconfig file
+
+view config file
+kubectl config view 
+Use --kubeconfig=config-demo for custom config file.
+kubectl config --kubeconfig=config-demo view
+ k cluster-info --kubeconfig=CKA/super.kubeconfig --> validate the configfile
+
+set-cluster
+kubectl config set-cluster --help
+kubectl config --kubeconfig=config-demo set-cluster development --server=https://1.2.3.4 --certificate-authority=fake-ca-file
+
+set-credentials
+kubectl config set-credentials --help
+kubectl config --kubeconfig=config-demo set-credentials developer --client-certificate=fake-cert-file --client-key=fake-key-seefile
+
+set-context
+kubectl config set-context --help
+kubectl config --kubeconfig=config-demo set-context dev-frontend --cluster=development --namespace=frontend --user=developer
+
+change context
+kubectl config use-context <context-name>
+
+change namespace in same context
+kubectl config set-context $(kubectl config current-context) --namespace=<NAMESPACE>
+kubectl config set-context --current --namespace=<insert-namespace-name-here>
+
+create roles & bindings
+kubectl create role foobar --verb="get,watch" --resource=pod 
+kubectl create role pod-reader --verb=get,delete --resource=pods,secret
+ --resource-name=readablepod --resource-name=anotherpod --namespace=test 
+k create rolebinding deploy-secrets --user=deploy@test.com --role=foobar
+
+kubectl get roles
+kubectl get rolebindings
+kubectl edit role developer -n blue
+k auth can-i delete pods
+k auth can-i delete pods --namespace=kube-system
+k auth can-i create secret --as dev-user #if you have admin prev
+
+To view list of namespace scoped resources
+ kubectl api-resources --namespaced=true
+To view list of cluster scoped resources
+ kubectl api-resources --namespaced=false
+
+
+cluster roles & bindings
+k create clusterrole secret --verb="*" --resource=secret
+k create clusterrolebinding secret --user=secret@test.com --clusterrole=secret
+k auth can-i create secret --as secret@test.com # yes
+k auth can-i "*" secret --as secret@test.com # yes
+
+k create clusterrole deploy-secrets --verb="get" --resource=secrets --resource-name=compute-secret
+k create clusterrolebinding deploy-secrets --user=deploy@test.com --clusterrole=deploy-secrets
+k auth can-i get secrets --as deploy@test.com # no
+k auth can-i get secrets/compute-secret --as deploy@test.com # yes
+k auth can-i delete secrets/compute-secret --as deploy@test.com # no
+
+Image security
+create secret for private registry
+ k create secret docker-registry private-reg-cred --docker-username=dock_user --docker-password=dock_password 
+ --docker-server=myprivateregistry.com:5000 --docker-email=dock_user@myprivateregistry.com
+
+Security context
+spec:
+  securityContext:
+    runAsUser: 1000
+  containers:
+  - name: sec-ctx-demo-2
+    image: gcr.io/google-samples/node-hello:1.0
+    securityContext:
+      runAsUser: 2000
+      allowPrivilegeEscalation: false
+kubectl exec -it ubuntu-sleeper -- whoami
+
+Kubeadm cluster setup
+https://gist.github.com/venkatzgithub/b6588f0b993f32cc5938b536f08f42ef
+
+kubelet --version
+kubeadm token create --help
+kubeadm token create --print-join-command
+
+Ingress
+kubectl edit ingress ingress-wear-watch 
+
+Troubleshooting application failure
+1. ensure resource names are right
+2. ensure ports and selectors of svcs
+3. ensure environment variables are set right
+Troubleshooting control plane failure
+1. kubectl get pods -n kube-system ---> see ctrl plane pods are running
+2. see the logs of the pod
+3. debug in yaml files  ---> vi /etc/kubernetes/manifests/
+
+Troubleshooting worker node
+ps -aux | grep kubelet | grep "config" to find config & kubeconfig file paths
+1. check kubelet process status---> ps -aux | grep kubelet
+2. check kubelet service status--->systemctl status kubelet
+3. start kubelet if it is inactive --> systemctl restart kubelet or service kubelet start
+4. check for logs --> journalctl -u kubelet
+5. debug in var/lib/kubelet/config.yaml (check for cert path )
+6. if any changes are made to config files --> systemctl restart kubelet
+
+IP range
+how to find ip range spec
+1. service: cat /etc/kubernetes/manifests/kube-apiserver.yaml | grep cluster-ip-range
+2. kubectl logs weave-net-dqvpc weave -n kube-system 
+see ipalloc
+3. nodes: ip addr
+look into ens3 values 
+
+ssh node01
+Check the service logs using journalctl -u kubelet. 
+Start the stopped services. ssh node01 "service kubelet start"
+
+cd /etc/systemd/system/kubelet.service.d
+check for --kubeconfig in the file
+open the config file in the location
+
+
+ 1. systemctl - To interact with the services (start,stop,restart,reload) e.g. systemctl start kubelet
+ 2. journalctl - To view the logs of the services. e.g. journalctl -xe -u kubelet
+There is another one to check logs - in case container is dead.
+docker logs <container_id>
+this is handy in debugging control plane components
+
+
+Deployment
+kubectl edit deploy frontend
+k set image deploy name
+
+Json path
+kubectl get po -o jsonpath='{.items[*].spec.containers[].env[0].name}{"\n"}'
+kubectl get nodes -o jsonpath='{.items[*].status.nodeInfo.osImage}' > /opt/outputs/nodes_os_x43kj56.txt
+kubectl get pods -o=jsonpath={.items[*].metadata.name} -l app=material-information-vue
+
+kubectl describe pods ubuntu-sleeper | grep -iC 5 command This shows 5 lines before and after the match. 
+Try to keep your search term unique in resource object.
+
+kubectl explain pod --recursive | less
+kubectl explain pod --recursive | grep -A5 tolerations
+
+k run pod --image=busybox:1.28.4 --restart=Never --rm -it nslookup nginx-resolver-service > /root/CKA/nginx.svc
+k run pod --image=busybox:1.28.4 --restart=Never --rm -it nslookup 10-244-1-8.default.pod > /root/CKA/nginx.pod
+
+echo "stringtodecode" | base64 --decode
+echo "stringtoencode" | base64
+
+cat john.csr | base64 | tr -d "\n"
+kubectl api-versions | grep network
+find & replace in editor
+sed -i -e 's/few/asd/g' hello.txt
