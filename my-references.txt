@@ -1,0 +1,13 @@
+https://unix.stackexchange.com/questions/200239/how-can-i-keep-my-ssh-sessions-from-freezing
+client:
+/etc/ssh/ssh_config
+
+Host *
+ServerAliveInterval 100
+===
+/etc/ssh/sshd_config
+
+ClientAliveInterval 60
+TCPKeepAlive yes
+ClientAliveCountMax 10000
+
