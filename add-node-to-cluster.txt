@@ -1,0 +1,38 @@
+https://medium.com/kubernetes-tutorials/learn-how-to-use-tls-bootstrapping-in-kubernetes-9c54787663a5
+cat <<EOF > /etc/kubernetes/bootstrap-kubeconfig
+apiVersion: v1
+kind: Config
+clusters:
+- cluster:
+    certificate-authority: /etc/kubernetes/pki/ca.crt
+    server: https://178.128.13.36:6443
+  name: bootstrap
+contexts:
+- context:
+    cluster: bootstrap
+    user: kubelet-bootstrap
+  name: bootstrap
+current-context: bootstrap
+preferences: {}
+users:
+- name: kubelet-bootstrap
+  user:
+    token: oyu57v.fxlye1gi6ahxcgdp
+EOF
+
+
+cat <<EOF > /etc/systemd/system/kubelet.service
+[Service] 
+Restart=always 
+ExecStart=/usr/bin/kubelet --kubeconfig=/etc/kubernetes/kubeconfig \\ 
+--bootstrap-kubeconfig=/etc/kubernetes/bootstrap-kubeconfig \\ 
+--pod-manifest-path=/etc/kubernetes/manifests \\ 
+--feature-gates=RotateKubeletClientCertificate=true \\ 
+--rotate-certificates 
+[Install] 
+WantedBy=multi-user.target
+EOF
+
+systemctl daemon-reload
+systemctl enable kubelet
+systemctl start kubelet
