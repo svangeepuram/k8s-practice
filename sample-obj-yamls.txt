@@ -1,3 +1,12 @@
+CNI:
+*****
+Flannel: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+
+Calico: kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
+
+
+
+
 apiVersion: v1
 kind: Pod
 metadata:
