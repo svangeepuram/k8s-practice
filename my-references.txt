@@ -30,3 +30,12 @@ Finally, we can return the data associated with that key by using the get comman
 # etcdctl get skydns/local/cluster/svc/default/kubernetes/8618524b
 
 {"host":"10.55.240.1","priority":10,"weight":10,"ttl":30,"targetstrip":0}
+
+.:53 {
+    etcd {
+        path /skydns
+        endpoint <etcd_endpoint>
+        upstream /etc/resolv.conf
+    }
+    ...
+}
