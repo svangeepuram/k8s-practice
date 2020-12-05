@@ -9,6 +9,20 @@ Calico: kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
 kubectl run dnsutils --image=gcr.io/kubernetes-e2e-test-images/dnsutils:1.3 -- sleep 1000
 
 
+coredns:
+
+mkdir coredns
+cd coredns
+git clone
+
+grep -i clusterdns /var/lib/kubelet/config.yaml
+cd kubernetes
+./deploy.sh -i <aboveip> > coredns.yaml
+
+sudo apt install jq -y
+
+
+
 
 
 apiVersion: v1
