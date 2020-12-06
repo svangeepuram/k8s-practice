@@ -10,6 +10,15 @@ apt install bind-utils
 curl:
 apt install curl
 
+lsof:
+apt install lsof
+
+strace:
+apt install strace
+
+
+wget:
+apt install wget
 ip:
 apt install iproute2
 
@@ -21,6 +30,16 @@ pt-get install -y ss-dev
 
 ps:
 apt-get install -y procps
+
+tcpdump:
+apt-get install tcpdump
+
+
+wireshark:
+sudo apt-get install software-properties-common
+
+sudo add-apt-repository ppa:wireshark-dev/stable
+sudo apt-get update
 
 ===
 https://unix.stackexchange.com/questions/200239/how-can-i-keep-my-ssh-sessions-from-freezing
