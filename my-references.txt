@@ -1,4 +1,8 @@
 
+command line completion :
+
+http://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#Commands-For-Completion
+
 Hardening:
 https://www.cyberciti.biz/tips/linux-security.html
 
@@ -88,6 +92,22 @@ resolvectl openpgp zbyszek@fedoraproject.org
 resolvectl tlsa tcp fedoraproject.org:443
 
 =====
+root@worker2:/lib/systemd# grep -ir "OnCalendar" .
+./system/motd-news.timer:OnCalendar=00,12:00:00
+./system/apt-daily.timer:OnCalendar=*-*-* 6,18:00
+./system/mdcheck_continue.timer:OnCalendar=daily
+./system/xfs_scrub_all.timer:OnCalendar=Sun *-*-* 03:10:00
+./system/man-db.timer:OnCalendar=daily
+./system/mdmonitor-oneshot.timer:OnCalendar=daily
+./system/mdcheck_start.timer:OnCalendar=Sun *-*-1..7 1:00:00
+./system/apt-daily-upgrade.timer:OnCalendar=*-*-* 6:00
+./system/fstrim.timer:OnCalendar=weekly
+./system/fwupd-refresh.timer:OnCalendar=*-*-* 6,18:00
+./system/e2scrub_all.timer:OnCalendar=Sun *-*-* 03:10:00
+./system/logrotate.timer:OnCalendar=daily
+./system/snapd.snap-repair.timer:OnCalendar=*-*-* 5,11,17,23:00
+=====
+
 https://rsmitty.github.io/Manually-Checking-Out-KubeDNS/
 
 kubectl exec -ti --namespace=kube-system kube-dns-v11-xxxxx -c etcd -- /bin/sh
