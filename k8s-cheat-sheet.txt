@@ -37,4 +37,64 @@ spec:
         - containerPort: 8080
         resources: {}
 status: {}
+============
+kubectl create job myjob --image=nginx --save-config --validate -o yaml  --dry-run=client -- date
+apiVersion: batch/v1
+kind: Job
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"kind":"Job","apiVersion":"batch/v1","metadata":{"name":"myjob","creationTimestamp":null},"spec":{"template":{"metadata":{"creationTimestamp":null},"spec":{"containers":[{"name":"myjob","image":"nginx","command":["date"],"resources":{}}],"restartPolicy":"Never"}}},"status":{}}
+  creationTimestamp: null
+  name: myjob
+spec:
+  template:
+    metadata:
+      creationTimestamp: null
+    spec:
+      containers:
+      - command:
+        - date
+        image: nginx
+        name: myjob
+        resources: {}
+      restartPolicy: Never
+status: {}
+====
+kubectl create cronjob cronjob1 --image=nginx --schedule="*/10 * * * *" --restart=OnFailure --save-config --validate=true  --dry-run=client -o yaml -- date
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"kind":"CronJob","apiVersion":"batch/v1beta1","metadata":{"name":"cronjob1","creationTimestamp":null},"spec":{"schedule":"*/10 * * * *","jobTemplate":{"metadata":{"name":"cronjob1","creationTimestamp":null},"spec":{"template":{"metadata":{"creationTimestamp":null},"spec":{"containers":[{"name":"cronjob1","image":"nginx","command":["date"],"resources":{}}],"restartPolicy":"OnFailure"}}}}},"status":{}}
+  creationTimestamp: null
+  name: cronjob1
+spec:
+  jobTemplate:
+    metadata:
+      creationTimestamp: null
+      name: cronjob1
+    spec:
+      template:
+        metadata:
+          creationTimestamp: null
+        spec:
+          containers:
+          - command:
+            - date
+            image: nginx
+            name: cronjob1
+            resources: {}
+          restartPolicy: OnFailure
+  schedule: '*/10 * * * *'
+status: {}
+ubuntu@master:
+===
+
+kubectl create job test-job --from=cronjob/cronjob1
+==
+kubectl create ns sales --save-config --validate=true
+kubectl label ns/sales env=prod
+kubectl get ns sales -oyaml
 
