@@ -1,4 +1,17 @@
+
+Hardening:
+https://www.cyberciti.biz/tips/linux-security.html
+
 install tools:
+
+firewalld:
+apt-get install firewalld
+
+apt install ufw
+
+ssh server:
+apt-get install openssh-server
+apt install openssh-client
 
 netstat :
 apt install net-tools 
