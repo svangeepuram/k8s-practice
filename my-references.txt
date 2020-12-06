@@ -1,3 +1,28 @@
+install tools:
+
+netstat :
+apt install net-tools 
+ping:
+apt install iputils-ping
+dig/nslookup:
+apt install bind-utils
+
+curl:
+apt install curl
+
+ip:
+apt install iproute2
+
+jq:
+apt install jq
+
+ss:
+pt-get install -y ss-dev
+
+ps:
+apt-get install -y procps
+
+===
 https://unix.stackexchange.com/questions/200239/how-can-i-keep-my-ssh-sessions-from-freezing
 client:
 /etc/ssh/ssh_config
