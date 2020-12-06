@@ -78,6 +78,16 @@ ClientAliveCountMax 10000
 
 
 =====
+resolvectl query www.google.com
+resolvectl query 216.58.194.196
+resolvectl -t MX query google.com
+resolvectl --legend=no  -t MX query google.com
+resolvectl service _xmpp-server._tcp gmail.com
+resolvectl --legend=no  service _xmpp-server._tcp gmail.com
+resolvectl openpgp zbyszek@fedoraproject.org
+resolvectl tlsa tcp fedoraproject.org:443
+
+=====
 https://rsmitty.github.io/Manually-Checking-Out-KubeDNS/
 
 kubectl exec -ti --namespace=kube-system kube-dns-v11-xxxxx -c etcd -- /bin/sh
