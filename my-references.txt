@@ -4,6 +4,9 @@ https://www.cyberciti.biz/tips/linux-security.html
 
 install tools:
 
+install gpg:
+apt-get install gnupg
+
 firewalld:
 apt-get install firewalld
 
@@ -28,6 +31,11 @@ apt install lsof
 
 strace:
 apt install strace
+
+kubeadm preflight prereqs:
+[Error] if conntrack, ip, iptables, mount, nsenter commands are not present in the command path
+[warning] if ebtables, ethtool, socat, tc, touch, crictl commands are not present in the command path
+
 
 
 wget:
