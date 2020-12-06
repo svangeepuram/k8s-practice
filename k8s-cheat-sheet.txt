@@ -98,3 +98,65 @@ kubectl create ns sales --save-config --validate=true
 kubectl label ns/sales env=prod
 kubectl get ns sales -oyaml
 
+==
+k create service clusterip web-svc --tcp 8080:8080 --clusterip=10.96.0.20 --dry-run=client -oyaml
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: web-svc
+  name: web-svc
+spec:
+  clusterIP: 10.96.0.20
+  ports:
+  - name: 8080-8080
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: web-svc
+  type: ClusterIP
+status:
+  loadBalancer: {}
+ ====
+k create service clusterip headless-web-svc --tcp 8080:8080 --clusterip="None" --dry-run=client -oyaml
+kubectl create service nodeport my-nodeport-svc --tcp=5678:8080 --node-port=32323 --dry-run=client -oyaml
+===
+kubectl create service externalname  my-external-svc --tcp=8080:8080 --external-name="rest-svc.company.com" --dry-run=client -oyaml
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: my-external-svc
+  name: my-external-svc
+spec:
+  externalName: rest-svc.company.com
+  selector:
+    app: my-external-svc
+  type: ExternalName
+status:
+  loadBalancer: {}
+==
+kubectl create service loadbalancer my-lbs --tcp=5678:8080 --dry-run=client -oyaml
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: my-lbs
+  name: my-lbs
+spec:
+  ports:
+  - name: 5678-8080
+    port: 5678
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: my-lbs
+  type: LoadBalancer
+status:
+  loadBalancer: {}
+  ==
+  
