@@ -89,7 +89,7 @@ ssh-keygen -t rsa -b 2048
 cat .ssh/id_rsa.pub
 
 cat <<EOF >> ~/.ssh/authorized_keys
-ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQClnFtOzRQEP/240dF8FM5wqV1dPy+vYXw44Hrpy++FmaMjELQlMyaLABcToX/PMKUW9e5dD7i6NXa4TEKk/sCWQtGkJpNhlTZt9XK6LHhKmldo0Xzldb19IbFEniTHsOaWhuh6NUJlRAB3QnDTYwKyr1ei8l2a3cp2uOIduONTtQTAbRCmZPOJUe2QZQ7dp9+UACZudbGxnqctLJt6Tddp76h5qaJ56DOjPhTy/6PoBhzUHjsLziClDJ6Vcle9O13zqqgzw5fWAKZNGrCra1z8ubOs3XHTmVvanCp/z4iB/fca0wetXp/jy3DaSlTCT/GRldutQsLog0kIQyfihO+j vagrant@master-1
+ssh-rsa public-key
 EOF
 
 on master :
@@ -104,6 +104,7 @@ kubectl version --client
 
 sudo sed -i '0,/RANDFILE/{s/RANDFILE/\#&/}' /etc/ssl/openssl.cnf
 
+openssl genrsa -out ca.key 2048
 openssl req -new -key ca.key -subj "/CN=KUBERNETES-CA" -out ca.csr
 
 openssl x509 -req -in ca.csr -signkey ca.key -CAcreateserial  -out ca.crt -days 1000
