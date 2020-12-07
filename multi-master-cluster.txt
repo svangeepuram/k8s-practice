@@ -1367,6 +1367,36 @@ DNS Add-on
 deploy the DNS add-on which provides DNS based service discovery,
 backed by CoreDNS, to applications running inside the Kubernetes cluster.
 
+
+kubectl apply -f https://raw.githubusercontent.com/svangeepuram/k8s-practice/master/coredns.yaml
+kubectl get pods -A
+kubectl get pods -l k8s-app=kube-dns -n kube-system
+kubectl get nodes
+kubectl get pods -A
+kubectl run busybox --image=busybox:1.28 --command -- sleep 3600
+kubectl get pod busybox -o yaml
+kubectl get pods -l run=busybox
+kubectl exec -ti busybox -- nslookup kubernetes
+kubectl create secret generic kubernetes-the-hard-way   --from-literal="mykey=mydata"
+kubectl create deployment nginx --image=nginx
+kubectl get pods -l app=nginx
+kubectl get pods -A
+kubectl expose deploy nginx --type=NodePort --port 80
+PORT_NUMBER=$(kubectl get svc -l app=nginx -o jsonpath="{.items[0].spec.ports[0].nodePort}")
+curl http://worker-1:$PORT_NUMBER
+curl http://worker-2:$PORT_NUMBER
+POD_NAME=$(kubectl get pods -l app=nginx -o jsonpath="{.items[0].metadata.name}")
+kubectl logs $POD_NAME
+kubectl exec -ti $POD_NAME -- nginx -v
+
+
+=============================
+
+etcd masters:
+sudo apt update
+sudo apt install etcd-client -y
+ sudo ETCDCTL_API=3 etcdctl get   --endpoints=https://127.0.0.1:2379   --cacert=/etc/etcd/ca.crt   --cert=/etc/etcd/etcd-server.crt   --key=/etc/etcd/etcd-server.key  /registry/secrets/default/kubernetes-the-hard-way | hexdump -C
+
 Read this:
 https://blogs.infoblox.com/community/coredns-for-kubernetes-service-discovery/
 
