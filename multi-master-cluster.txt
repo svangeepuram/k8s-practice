@@ -1190,6 +1190,12 @@ NAME        AGE   SIGNERNAME                                    REQUESTOR       
 csr-qlg4b   53s   kubernetes.io/kube-apiserver-client-kubelet   system:bootstrap:07401b   Approved,Issued
 csr-r9644   49s   kubernetes.io/kubelet-serving                 system:node:worker-2      Pending
 
+myhost="worker-2"
+mycsr=$(kubectl get csr | grep ${myhost} | cut -d' ' -f1)
+echo $mycsr
+kubectl certificate approve $mycsr
+kubectl get csr $mycsr
+
 kubectl certificate approve csr-r9644
 
 approve and verify:
@@ -1208,7 +1214,8 @@ worker-2   NotReady   <none>   2m54s   v1.19.4
 =========
 Configuring kubectl for Remote Access
 generate a kubeconfig file for the kubectl command line utility based on the admin user credentials.
-
+ on master-1:
+ 
 export KUBERNETES_LB_ADDRESS=192.168.5.30
 
 {
