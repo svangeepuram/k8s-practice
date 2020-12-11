@@ -80,7 +80,30 @@ ClientAliveInterval 60
 TCPKeepAlive yes
 ClientAliveCountMax 10000
 
+ecdsa keys:
+ssh-keygen -t ecdsa -b 521 -C "user@gmail.com"
 
+
+ssh-keygen -t ed25519 -b 521 -C "user@gmail.com"
+
+~/.ssh/config:
+Host macbook
+     HostName 192.168.0.100
+     User johndoe
+     IdentityFile ~/.ssh/id_ed25519
+     ServerAliveInterval 60
+     ServerAliveCountMax 30
+
+### default for all ##
+Host *
+     ForwardAgent no
+     ForwardX11 no
+     ForwardX11Trusted yes
+     Port 22
+     Protocol 2
+     ServerAliveInterval 60
+     ServerAliveCountMax 30
+ 
 =====
 resolvectl query www.google.com
 resolvectl query 216.58.194.196
