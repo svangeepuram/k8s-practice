@@ -1,5 +1,10 @@
+cat << EOF >> ~/.bashrc
+source <(kubectl completion bash)
 alias k=kubectl
-k version --short
+complete -F __start_kubectl k
+EOF
+source ~/.bashrc
+
 
 
 export do="--dry-run=client -o yaml"
