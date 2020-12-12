@@ -1,4 +1,44 @@
-multi-master cluster
+kubeadm:
+
+sudo kubeadm config images pull
+sudo swapoff -a
+sudo kubeadm init --pod-network-cidr=192.168.5.0/24 --apiserver-advertise-address=192.168.5.11  --apiserver-cert-extra-sans krishi.net,www.krishi.net,k8s.krishi.net,localhost
+mkdir -p $HOME/.kube
+kubectl get nodes
+mkdir calico
+cd calico/
+curl -LO https://raw.githubusercontent.com/svangeepuram/k8s-practice/master/calico.yaml
+
+use right interface ie enp0s9
+
+====
+Worker:
+
+install docker : after that...
+cat <<EOF | sudo tee -a /etc/docker/daemon.json
+{
+  "exec-opts": ["native.cgroupdriver=systemd"],
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-size": "100m"
+  },
+  "storage-driver": "overlay2",
+  "log-level":        "error"
+}
+EOF
+
+sudo systemctl daemon-reload
+sudo  systemctl restart docker
+sudo systemctl status docker
+sudo -i
+sudo  apt-get install -y kubelet kubeadm kubectl
+sudo apt-mark hold kubelet kubeadm kubectl
+echo "source <(kubectl completion bash)" >> ~/.bashrc
+source ~/.bashrc
+sudo kubeadm join 192.168.5.11:6443 --token 2qu5hj.fxnrypeb43p6mc6f     --discovery-token-ca-cert-hash sha256:823c3a125048856f45fa7e3e61f9db06b3de0fbbf7bda41408f88ebf07e0ad54 
+
+=========
+multi-master cluster - hardway
 
 
 178.128.72.232 : k8shost
