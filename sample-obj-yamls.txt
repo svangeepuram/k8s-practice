@@ -8,7 +8,41 @@ Calico: kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
 
 kubectl run dnsutils --image=gcr.io/kubernetes-e2e-test-images/dnsutils:1.3 -- sleep 1000
 
+========
+sidecar sample :
+producer-consumer:
 
+apiVersion: v1
+kind: Pod
+metadata:
+  name: two-containers
+spec:
+  restartPolicy: Never
+  volumes:
+  - name: logs 
+    emptyDir: {}
+  containers:
+  - name: producer
+    image: busybox
+    volumeMounts:
+    - name: logs 
+      mountPath: /var/log1
+    args:
+    - /bin/sh
+    - -c
+    - "while true; do echo $(date) hello world >> /var/log1/app.log && sleep 5; done"
+  - name: sidecar
+    image: busybox
+    args:
+    - /bin/sh
+    - -c
+    - "tail -n+1 -f /var/log2/app.log"
+    volumeMounts:
+    - name: logs 
+      mountPath: /var/log2
+
+
+=======
 coredns:
 
 mkdir coredns
