@@ -6,6 +6,10 @@ http://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#Commands-For-Com
 Hardening:
 https://www.cyberciti.biz/tips/linux-security.html
 
+https://www.opensourceforu.com/2018/03/top-10-open-source-tools-linux-systems-administrators/
+https://www.cyberciti.biz/tips/top-linux-monitoring-tools.html
+
+
 install tools:
 
 install gpg:
@@ -95,7 +99,26 @@ sudo apt-get update
 
 apt install wireshark
 nmap:
-sudo apt-get install nmap
+sudo apt-get install nmap -y
+
+sar:
+apt-get install sysstat -y
+
+-u CPU Usage of ALL CPUs
+-q Reports run queue and load average
+-r Memory Free and Used
+-S Swap Space Used
+-b Overall I/O Activities
+-d Individual Block Device I/O Activities
+-n Report network statistics
+sudo vi /etc/default/sysstat
+ENABLED="true"
+
+==
+sudo vi /etc/cron.d/sysstat
+# Activity reports every 10 minutes everyday 
+* * * * * root command -v debian-sa1 > /dev/null && debian-sa1 1 1
+
 
 ===
 https://unix.stackexchange.com/questions/200239/how-can-i-keep-my-ssh-sessions-from-freezing
