@@ -1,3 +1,37 @@
+ipvs installation and testing:
+https://medium.com/@benmeier_/a-quick-minimal-ipvs-load-balancer-demo-d5cc42d0deb4
+
+mkdir -p /srv/A /srv/B
+
+echo "This is A" |sudo tee -a /srv/A/index.html
+echo "This is B" |sudo tee -a /srv/B/index.html
+
+sudo docker run --rm -d -v "/srv/A:/usr/share/nginx/html" --name nginx-A nginx
+sudo docker run --rm -d -v "/srv/B:/usr/share/nginx/html" --name nginx-B nginx
+export hosta_ip=$(sudo docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' nginx-A)
+echo ${hosta_ip}
+
+export hostb_ip=$(sudo docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' nginx-B)
+echo ${hostb_ip}
+curl ${hosta_ip}:80
+curl ${hostb_ip}:80
+sudo docker exec nginx-A bash -c "cd /usr/share/nginx/html; cat index.html "
+sudo docker exec nginx-B bash -c "cd /usr/share/nginx/html; cat index.html "
+
+sudo docker exec -w /usr/share/nginx/html nginx-A cat index.html
+sudo docker exec -w /usr/share/nginx/html nginx-B cat index.html
+
+sudo apt install ipvsadm
+
+sudo ipvsadm -A -t 1.2.3.4:80 -s rr
+sudo ipvsadm -a -t 1.2.3.4:80 -r ${hosta_ip} -m
+sudo ipvsadm -a -t 1.2.3.4:80 -r ${hostb_ip} -m
+
+sudo ipvsadm -l
+curl 1.2.3.4
+curl 1.2.3.4
+
+
 
 command line completion :
 
