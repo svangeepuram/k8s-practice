@@ -9,62 +9,93 @@ https://www.cyberciti.biz/tips/linux-security.html
 install tools:
 
 install gpg:
-apt-get install gnupg
+apt-get install gnupg -y
 
 firewalld:
-apt-get install firewalld
+apt-get install firewalld -y
 
-apt install ufw
+apt install ufw -y
 
 ssh server:
-apt-get install openssh-server
-apt install openssh-client
+apt-get install openssh-server -y
+apt install openssh-client -y
 
 netstat :
 apt install net-tools 
 ping:
-apt install iputils-ping
+apt install iputils-ping -y
 dig/nslookup:
-apt install bind-utils
+apt install bind9-utils -y 
 
 curl:
-apt install curl
+apt install curl -y
 
 lsof:
 apt install lsof
 
 strace:
-apt install strace
+apt install strace -y
 
 kubeadm preflight prereqs:
 [Error] if conntrack, ip, iptables, mount, nsenter commands are not present in the command path
 [warning] if ebtables, ethtool, socat, tc, touch, crictl commands are not present in the command path
+
+apt install conntrack  iptables mount y
+
+install nsenter:
+https://gist.github.com/mbn18/0d6ff5cb217c36419661
+
+nsenter
+apt-get install git build-essential libncurses5-dev libslang2-dev gettext zlib1g-dev libselinux1-dev debhelper lsb-release pkg-config po-debconf autoconf automake autopoint libtool bison -y
+git clone git://git.kernel.org/pub/scm/utils/util-linux/util-linux.git util-linux
+cd util-linux/
+
+./autogen.sh
+./configure --without-python --disable-all-programs --enable-nsenter
+make
+chmod +x nsenter 
+mv nsenter /usr/local/bin/
+bash-completion/nsenter /etc/bash_completion.d/nsenter
+
+==
+
+
 
 
 
 wget:
 apt install wget
 ip:
-apt install iproute2
+apt install iproute2 -y
 
 jq:
-apt install jq
+apt install jq -y
 
 ss:
-pt-get install -y ss-dev
+apt-get install -y ss-dev
+
+ss -t
+ss state all sport = :ssh
+ss state connected sport = :ssh
+ss state all dst 74.125.0.0/16
 
 ps:
 apt-get install -y procps
 
 tcpdump:
-apt-get install tcpdump
+apt-get install tcpdump -y
+
 
 
 wireshark:
-sudo apt-get install software-properties-common
+sudo apt install software-properties-common -y
 
 sudo add-apt-repository ppa:wireshark-dev/stable
 sudo apt-get update
+
+apt install wireshark
+nmap:
+sudo apt-get install nmap
 
 ===
 https://unix.stackexchange.com/questions/200239/how-can-i-keep-my-ssh-sessions-from-freezing
@@ -102,7 +133,9 @@ Host *
      Port 22
      Protocol 2
      ServerAliveInterval 60
-     ServerAliveCountMax 30
+
+ipvs:
+
  
 =====
 resolvectl query www.google.com
