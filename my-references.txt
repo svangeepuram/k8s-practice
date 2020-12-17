@@ -17,6 +17,12 @@ curl ${hosta_ip}:80
 curl ${hostb_ip}:80
 sudo docker exec nginx-A bash -c "cd /usr/share/nginx/html; cat index.html "
 sudo docker exec nginx-B bash -c "cd /usr/share/nginx/html; cat index.html "
+sudo docker exec -u 0 nginx-A whoami
+
+sudo docker exec -u 0 nginx-B whoami
+
+sudo docker run -it ubuntu:20.04 -- bash
+docker exec -e UID='myuser' 74f86665f0fd printenv UID
 
 sudo docker exec -w /usr/share/nginx/html nginx-A cat index.html
 sudo docker exec -w /usr/share/nginx/html nginx-B cat index.html
@@ -28,10 +34,30 @@ sudo ipvsadm -a -t 1.2.3.4:80 -r ${hosta_ip} -m
 sudo ipvsadm -a -t 1.2.3.4:80 -r ${hostb_ip} -m
 
 sudo ipvsadm -l
-curl 1.2.3.4
-curl 1.2.3.4
 
+for i in {1..10}; do curl 1.2.3.4; done
 
+sudo ipvsadm -E -t 1.2.3.4:80 -s wrr
+sudo ipvsadm -e -t 1.2.3.4:80 -r 172.17.0.3 -m -w 3
+ for i in {1..10}; do curl 1.2.3.4; done
+ sudo ipvsadm -L -n --stats --rate
+
+sudo ipvsadm -L -n --rate
+IP Virtual Server version 1.2.1 (size=4096)
+Prot LocalAddress:Port                 CPS    InPPS   OutPPS    InBPS   OutBPS
+  -> RemoteAddress:Port
+TCP  1.2.3.4:80                          1       10        7      608      704
+  -> 172.17.0.2:80                       0        2        2      143      166
+  -> 172.17.0.3:80                       1        7        5      465      538
+vagrant@worker-3:/srv/A$ sudo cat /proc/net/ip_vs_stats
+   Total Incoming Outgoing         Incoming         Outgoing
+   Conns  Packets  Packets            Bytes            Bytes
+      5C      27D      1C5             9D66             B548
+
+ Conns/s   Pkts/s   Pkts/s          Bytes/s          Bytes/s
+       0        0        0                0                0
+
+==========================================
 
 command line completion :
 
