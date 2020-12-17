@@ -1,3 +1,6 @@
+@http://www.ultramonkey.org/papers/lvs_tutorial/html/
+IPVS tutorial
+
 ipvs installation and testing:
 https://medium.com/@benmeier_/a-quick-minimal-ipvs-load-balancer-demo-d5cc42d0deb4
 
