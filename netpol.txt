@@ -60,8 +60,71 @@ kubectl run --generator=run-pod/v1 test-$RANDOM --rm -i -t --image=alpine -- wge
 
 kubectl run test-$RANDOM --rm -i -t --image=alpine --labels app=bookstore,role=frontend -- wget -qO- --timeout=2 http://apiserver
 
+Cleanup:
+kubectl delete pod apiserver
+kubectl delete service apiserver
+kubectl delete networkpolicy api-allow
 
 =========
+
+Allow all on top of deny all voids deny all ...
+
+1. 
+kubectl apply -f - <<EOF
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: web-deny-all
+spec:
+  podSelector:
+    matchLabels:
+      app: web
+  ingress: []
+EOF
+
+2. 
+
+kubectl apply -f - <<EOF
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: web-allow-all
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      app: web
+  ingress:
+  - {}
+EOF
+
+Alternately Empty ingress its equivalent to allow all namespaces/pods
+
+kubectl apply -f - <<EOF
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: web-allow-all
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      app: web
+  ingress:
+  - from:
+    podSelector: {}
+    namespaceSelector: {}
+EOF
+
+Tester: It should work, since traffic is allowed
+kubectl run web --image=nginx --labels=app=web --expose --port 80
+kubectl run test-$RANDOM --rm -i -t --image=alpine --  wget -qO- --timeout=2 http://web
+
+Cleanup:
+kubectl delete pod,service web
+kubectl delete networkpolicy web-allow-all web-deny-all
+
+==========
 deny ingress :
 
 Target pod/service :
