@@ -1,0 +1,56 @@
+socat.txt
+
+nc.pid
+nc.port
+
+nc.port.new
+NC_HOME=/home/vagrant/nc_home
+PORT_FILE=${NC_HOME}/nc.port
+NEW_PORT_FILE=${NC_HOME}/nc.port.new
+
+PID_FILE=${NC_HOME}/nc.pid
+NEW_PID_FILE=${NC_HOME}/nc.pid.new
+
+if [ -f "${NEW_PORT_FILE}" ]; then
+    echo "$NEW_PORT_FILE exists."
+    IFS= read -r -u3 line <&3  3< "${NEW_PORT_FILE}"
+    port="$line"
+    echo "new port:" $port
+
+    netstat -ln | grep ":${port}\> " 2>&1 > /dev/null 
+    if [ $? -ne 0 ]; then   
+        echo "new port:" $port is available
+        socat TCP4-LISTEN:${port},fork EXEC:./bashttpd
+        if [ $? -eq 0 ]; then
+            echo "new process is spawned"
+            echo $$>NEW_PID_FILE
+            
+        else
+        fi
+    else
+        echo "new port:" $port is not available
+    fi
+else 
+    echo "$FILE does not exist."
+fi
+
+if nc.port.new present
+then
+# read the port from file
+#check if port is available
+#if so
+# prepare to kill current listener
+#once listner is killed
+# spawn new one with new port
+store the pid to nc.pid.new
+
+#check for liveness and readiness
+#if alive and ready
+rename nc.port.new to nc.port
+rename nc.pid.new to nc.pid
+
+else
+#message new port could not be acquired
+
+
+
