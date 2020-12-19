@@ -1,5 +1,105 @@
 
+Allow ingress - pod selector :
 
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: access-nginx
+spec:
+  podSelector:
+    matchLabels:
+      app: nginx
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          access: "true"
+
+
+tester:
+
+Persistent tester :
+kubectl run busybox --image=busybox -- sleep 1000
+kubecctl  exec busybox -it -- wget --spider --timeout=1 nginx
+it
+Test without label : it should not work
+kubectl run busybox --rm -ti --image=busybox -- wget --spider --timeout=1 nginx
+
+Test with label : It should work 
+kubectl run busybox --rm -ti --labels="access=true" --image=busybox --  wget --spider --timeout=1 nginx
+kubectl run busybox --rm -ti --labels="access=true" --image=busybox --  wget -qO - --timeout=1 nginx
+========
+
+
+
+
+=========
+deny ingress :
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-ingress
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+=======
+
+Allow all ingress:
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-all-ingress
+spec:
+  podSelector: {}
+  ingress:
+  - {}
+  policyTypes:
+  - Ingress
+=====
+
+Deny All egress:
+
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-egress
+spec:
+  podSelector: {}
+  policyTypes:
+  - Egress
+ 
+ ===========================
+ Allow all egress:
+ 
+ ---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-all-egress
+spec:
+  podSelector: {}
+  egress:
+  - {}
+  policyTypes:
+  - Egress
+  
+========
+
+Denny all ingress/egress:
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-all
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+  
+
+
+=========
 
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
