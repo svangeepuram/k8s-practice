@@ -1,0 +1,348 @@
+kubectl create ns source 
+kubectl label ns source app=web 
+
+kubectl create ns corpnet
+kubectl label ns corpnet app=web
+
+kubectl create ns client 
+kubectl label ns client app=web 
+
+kubectl create ns default 
+kubectl label ns default app=api
+
+kubectl create ns other
+kubectl label ns other app=outside
+
+
+ test pods :
+ namespace : source 
+ pod label : app=nginx, app=apache, app=hhmv two pods with each label
+
+wget -qO - http://10.101.95.35:9000
+wget -qO - node01:31234
+
+kubectl get -n kube-system ds weave
+
+#!/bin/bash
+SERVICE=`ip a | grep 10.254 |grep -v 10.254.0.1 |awk '{print $2}' |awk '{sub(/.{3}$/,"")}1'`
+   for delsvc in $SERVICE
+       do
+           COUNT=`kubectl get svc --all-namespaces | grep $delsvc | wc -l`
+           if [ $COUNT -eq 0 ]; then
+           echo "DELETE SERVICE $delsvc "
+           kubectl create service clusterip my-cs --clusterip="$delsvc" --tcp="8080:8080"
+           sleep 3;
+           kubectl delete svc  my-cs
+           else
+           echo "SERVICE $delsvc EXISTS"
+           fi;
+       done
+
+curl -Ls https://get.weave.works |
+  sh -s -- --token=j5j4fjw8pfrxuxiaa3jw9b5i1bzju6rm
+
+kubectl delete namespace weave
+
+
+- name: EXTRA_ARGS
+          value: --log-level=debug
+weavepod=$(kubectl get pods -n kube-system -l name=weave-net -o wide --no-headers | head -1 | awk '{print $1}')
+kubectl exec -n kube-system ${weavepod} -c weave -- /home/weave/weave --local status
+
+kubectl logs ${weavepod} -n kube-system weave-npc
+
+kubectl edit ds -n kube-system weave-net
+
+ pod1:  kubectl run pod1 --image=nginx -n source -l app=nginx 
+ pod2:  kubectl run pod2 --image=nginx -n source -l app=nginx
+
+ pod3: kubectl run pod3 --image=apache -n corpnet -l app=apache 
+ pod4: kubectl run pod4 --image=apache -n corpnet -l app=apache 
+
+ pod5: kubectl run pod5 --image=hhmv -n client -l app=hhmv 
+ pod6: kubectl run pod6 --image=hhmv -n client -l app=hhmv 
+
+Ingress Rules: 
+**********************
+> From app: web namespace 
+cat <<EOF |kubectl apply -f -
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: test-network-policy
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      app: web
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          app: web
+    ports:
+    - protocol: TCP
+      port: 9000
+EOF
+
+
+kubectl run myweb --image=nginx -l app=web --dry-run=client -o yaml
+
+cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    app: web
+  name: myweb
+spec:
+  containers:
+  - image: nginx
+    name: myweb
+    ports:
+    - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webserver
+spec:
+  type: NodePort
+  selector:
+    app: web
+  ports:
+    - port: 9000
+      targetPort: 80
+      nodePort: 31234
+EOF
+
+> From app:nginx pod selector 
+
+kubectl run netpol-target -n default --image=nginx --expose --port 9090
+
+kubectl run pod-$RANDOM --image=nginx -n default -it --rm -- sh
+watch "iptables -t nat -L KUBE-POSTROUTING -n -v"
+
+
+iptables -t nat -L KUBE-POSTROUTING -n -v
+iptables -t nat -L WEAVE -n -v
+
+
+kubectl run busybox --rm -ti --image=busybox /bin/sh
+If you don't see a command prompt, try pressing enter.
+/ # wget --spider -T 1 http://netpol-target.default.svc.cluster.local:9090
+
+kubectl run mysourcepod -n source 
+
+kubectl run pod1 --image=nginx -n source -l app=nginx  -it-- sh
+
+
+kubectl attach -n default pod2  -i -t -- sh
+
+
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: test-network-policy
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      app: api 
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: nginx 
+    ports:
+    - protocol: TCP
+      port: 9090
+
+
+> From app:web namespace & pod selector 
+
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: test-network-policy
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      app: api 
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          app: web 
+      podSelector:
+         matchLabels:
+           app: nginx 
+    ports:
+    - protocol: TCP
+      port: 9090
+
+> From app: web    cidr: 192.168.0.0/24 exclude 192.168.0.50 , 192.168.0.100
+
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: test-network-policy
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      app: api 
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - ipBlock:
+        cidr: 192.168.0.0/24
+        except:
+        - 192.168.0.50
+          192.168.0.100
+    ports:
+    - protocol: TCP
+      port: 9090
+
+================================================
+Egress rules: 
+**********************
+> To app: db namespace 
+
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: test-network-policy
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      app: db
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          app: target
+    ports:
+    - protocol: TCP
+      port: 8080
+
+
+> To app: db pod selector 
+
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: test-network-policy
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      app: db
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          app: target 
+    ports:
+    - protocol: TCP
+      port: 8080
+
+ > To app: db namespace and pod slector 
+
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: test-network-policy
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      app: db
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          app: target
+    podSelector:
+        matchLabels:
+          app: target 
+    ports:
+    - protocol: TCP
+      port: 8080
+
+> To app: db cidr 
+
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: test-network-policy
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      app: db
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+     - ipBlock:
+        cidr: 192.168.0.0/24
+        except:
+        - 192.168.0.50
+          192.168.0.100
+    ports:
+    - protocol: TCP
+      port: 8080
+
+
+
+
+/bin/sh -c commnd_str commandname arguments
+
+/bin/sh -c bash tail -n+1 a.txt
+
+/bin/sh -c '/bin/bash -c "tail -n+5 lines.txt"'
+
+
+/bin/sh -c '/bin/sh -c "tail -n+5 lines.txt"'
+
+/bin/sh -c "echo $(date)"
+entrypoint is it given or overridden
+
+default args - given or overridden or appended
+
+entrypoint defarg
+cmd newdefarg
+
+docker run mycontainer --entrypoint newcmd
+==> newcmd newdefarg
+
+docker run mycontainer --entrypoint newcmd newarg
+==> newcmd newarg
+
+docker run mycontainer --entrypoint newcmd
+==> newcmd newdefarg
+
+
+
+shell form:
+/bin/sh -c '/bin/bash -c "tail -n+5 lines.txt"'
+
+
+exec form
+exec("", "",)
