@@ -1,0 +1,1630 @@
+DNS:
+https://medium.com/kubernetes-tutorials/kubernetes-dns-for-services-and-pods-664804211501
+
+
+
+
+
+ Imperative commands
+****************************
+
+Practice below: 
+*************
+
+RBAC
+Network policies 
+Side car container 
+Init containers 
+Commands and arguments
+Env
+Configmaps 
+Secrets
+
+
+
+Expected questions: 
+***************
+
+Cluster Upgrade (kubeadm)
+ETCD backup and restore
+PV,PVC, StorageClass related, mounting PVC as volume to pod
+Deployment (Rolling update with --record option)
+Network Policy to allow ingress only for pods in a particular namespace
+Security Context set runAsUser, fsGroup
+Monitoring CPU / Memory of node and writing to some file
+Fetching details using jsonpath query and writing to some file
+Troubleshooting kubelet service failure
+Creation of clusterrole and clusterrolebinding
+
+
+> cluster upgrade
+> ETCD backup and restore
+> adding a worker node TLS bootstrap 
+> node is down , troubleshoot . Here check for the kubelet process .. fix and reload, enable and start kubelet
+> CNI (Flannel , CALICO installation) 
+> Init containers 
+
+pod with high cpu with specific labels and then re-directing it to a file
+  kubectl get pods -A -o custom-columns='NAME:.metadata.name,CPU:.spec.containers[*].resources.requests.cpu'
+
+create a new networkpolicy named allow-}-from-namespace in the esiting namespace fubar
+Ensure that the new Networkpolicy allows pods in namesap corp-net to connect to } 9000 of pods in namespace fubar.
+Further ensure that the new Networkpolicy:
+- Does not allow access to pods, which don't listen on } 9000
+- doent not allow access from Pods which are not in namespace corp-net  
+
+
+Create a New NetworkPolicy named all-ports-from-namespace that allows Pods in the existing 
+namespace net-corp to connect to } 9200 of other Pods in same namespace...
+
+there was a question in the exam to assign a pod to a node using NodeSelector, but the pod was
+not scheduled was in a pending state
+
+Create a pod named xyz with a single container for each of the following images running inside
+there may be between 1 and 4 images specified : nginx+redis+Memcached+consul.
+
+output to a file for No of nodes in cluster which are not tainted
+
+kubectl get nodes -o=custom-columns=NAME:.metadata.name,TAINTS:.spec.taints | grep "<none>" | cut -f 1 -d " "
+kubectl get nodes -o=custom-columns=NAME:.metadata.name,TAINTS:.spec.taints | grep "<none>" | awk '{print $1}'
+
+> Pods running on any nodes having a memory limit configured and write the name of the pod 
+having the highest memory limit configured for the file in /opt/temp.txt 
+
+Solution: 
+
+echo coredns-jhakfha | sudo tee -a /opt/temp.txt
+
+> add a busybox sidecar container to the existing pod (app). the new sidecar container has to run the following command:  /bin/sh -c tail -n+1 -f /var/log/app.log  .. use a volume mount named logs to make the file /var/log/app.log  available to the sidecar container  ????
+
+
+Lessons learnt : 
+
+> we can access container inside a pod with ns lookup
+> pv is cluster level resource /object. We can use claim-ref in PV resource to block / reserve PV space and bind it . OR make sure 
+   the parameters access modes , storage class, file system and capacity are same in PV, PVC so the PVC is bound. 
+> node affinity , pod affinity and inter pod affinity
+> use octal notation in secrets when configuring inside a POD
+> —record option updates annotations 
+
+CNI:
+*****
+Flannel: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+
+Calico: kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
+
+
+Kubelet files and configs:
+
+*********************
+
+Logs:
+
+journalctl -u kubelet -f
+
+
+>  /lib/systemd/system/kubelet.service
+
+Description=kubelet: The Kubernetes Node Agent
+Documentation=https://kubernetes.io/docs/home/
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+ExecStart=/usr/bin/kubelet
+Restart=always
+StartLimitInterval=0
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+
+
+>   /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+
+Environment="KUBELET_KUBECONFIG_ARGS=--bootstrap-kubeconfig=/etc/kubernetes/bootstrap-kubelet.conf --kubeconfig=/etc/kubernetes/kubelet.conf"
+Environment="KUBELET_CONFIG_ARGS=--config=/var/lib/kubelet/config.yaml"
+# This is a file that "kubeadm init" and "kubeadm join" generates at runtime, populating the KUBELET_KUBEADM_ARGS variable dynamically
+EnvironmentFile=-/var/lib/kubelet/kubeadm-flags.env
+# This is a file that the user can use for overrides of the kubelet args as a last resort. Preferably, the user should use
+# the .NodeRegistration.KubeletExtraArgs object in the configuration files instead. KUBELET_EXTRA_ARGS should be sourced from this file.
+EnvironmentFile=-/etc/default/kubelet
+ExecStart=
+ExecStart=/usr/bin/kubelet $KUBELET_KUBECONFIG_ARGS $KUBELET_CONFIG_ARGS $KUBELET_KUBEADM_ARGS $KUBELET_EXTRA_ARGS
+
+
+>    /var/lib/kubelet/config.yaml
+
+>  /var/lib/kubelet/kubeadm-flags.env
+
+> /etc/kubernetes/kubelet.conf
+
+
+Containers with Network tools : 
+****************************
+kubectl run busybox —image=busybox:1.28 — sleep 1000
+kubectl exec busybox -it sh
+wget ip:} -O out.txt
+
+
+kubectl run mycurl --image=tutum/curl  -- sleep 1000
+kubectl exec mycurl -it -- sh 
+curl 10.101.194.42:80
+
+
+kubectl run -ti networktroubleshooter --rm --image=praqma/network-multitool -- bash
+
+******************************************
+	
+
+> kubectl run redis --image redis:alpine -l label=label1,app=redis --dry-run=client -o yaml
+
+> kubectl expose pod redis --}=6379 --name redis-service --dry-run=client -o yaml
+
+> kubectl create deployment webapp --image nginx --dry-run=client -o yaml
+
+> kubectl scale deployment/webapp --replicas=3
+
+> kubectl run httpd --image=httpd:alpine --}=80 --expose
+
+> kubectl create deployment webapp --image=nginx
+
+> kubectl expose deployment webapp --}=8080 --name webapp-service
+
+> kubectl run --restart=Never --image=busybox static-busybox --dry-run -o yaml --command -- sleep 1000 > /etc/kubernetes/manifests/static-busybox.yaml
+
+> kubectl run messaging  --image=redis:alpine -l tier=msg
+
+> kubectl expose pod messaging --name=messaging-service —port=6379 —targetPort=6379  
+
+> kubectl run static-busybox —image=busybox —command sleep=1000 —dry-run=client -o yaml > static1.yaml
+
+> kubectl run messaging --image=redis:alpine -l tier=msg
+
+> kubectl expose pod messaging --}=6379  --name=messaging-service
+
+> Kubectl explain pv —recursive | less
+
+> kubectl create serviceaccount <name>
+
+> kubectl create clusterrole pvviewer-role --resource=persistentvolume --verb=list
+
+> kubectl create clusterrolebinding pvviewer-role-binding --clusterrole=pvviewer-role --serviceaccount=default:pvviewer	
+
+> kubectl cordon node01
+
+> command: ["/bin/sh”,  "-c", "sleep 4800"]
+
+> kubectl cluster-info  — Kubeconfig=/root/super.kubeconfig 
+
+> kubectl run test —image=busybox —rm -it —sh 
+
+> nc -z -v -w 2 np-test-service 80
+
+> kubectl api-versions | grep -I network
+
+> kubectl run nginx  —image=nginx —rm -it — nslookup <svc_name>
+
+> kubectl run nginx —image=nginx —rm -it — nslookup <ip>.default.pod
+
+> kubectl exec -it busybox -- nslookup 10-244-1-2.default.pod.cluster.local
+
+> kubectl exec -it busybox -- nslookup  <servicename> 
+
+
+ETCD backup: 
+***************
+ETCDCTL_API=3 etcdctl --endpoints=https://[127.0.0.1]:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/server.crt --key=/etc/kubernetes/pki/etcd/server.key member list
+ETCDCTL_API=3 etcdctl  snapshot save  /tmp/snapshot.db  --endpoints=https://[127.0.0.1]:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/server.crt --key=/etc/kubernetes/pki/etcd/server.key 
+ETCDCTL_API=3 etcdctl snapshot status -w table  /tmp/snapshot.db
+ --endpoints=https://[127.0.0.1]:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/server.crt --key=/etc/kubernetes/pki/etcd/server.key 
+
+Restore /Recovery
+******************
+
+ETCDCTL_API=3 etcdctl snapshot restore /tmp/snapshot.db \
+--endpoints=https://127.0.0.1:2379 \
+--cacert=/etc/kubernetes/pki/etcd/ca.crt \
+--cert=/etc/kubernetes/pki/etcd/server.crt \
+--key=/etc/kubernetes/pki/etcd/server.key \ 
+--name=master \
+--data-dir=/var/lib/etcd-from-backup \
+--initial-cluster=master=https://127.0.0.1:2380 \
+--initial-cluster-token=etcd-cluster-1 \
+--initial-advertise-peer-urls=https://127.0.0.1:2380
+
+
+
+ETCDCTL_API=3 etcdctl snapshot restore /tmp/snapshot.db --endpoints=https://127.0.0.1:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/server.crt --key=/etc/kubernetes/pki/etcd/server.key --name=master --data-dir=/var/lib/etcd-from-backup --initial-cluster=master=https://127.0.0.1:2380 --initial-cluster-token=etcd-cluster-1  --initial-advertise-peer-urls=https://127.0.0.1:2380
+
+
+Next edit 	/etcd.yaml and replace all data-dir entries that have /var/lib/etcd with /var/lib/etcd-from-backup
+Next add this line --initial-cluster-token=etcd-cluster-1 to the container configuration sections. Also, edit the hostpath and mountpath. 
+Save the file. It creates new etcd pod
+
+ps -aef | grep etcd 
+
+Another Method for ETCD backup and recovery
+*************************************************
+
+> kubectl get nodes
+> Backing up involves backing up TLS certs, keys of all cluster components and also backing up etcd. 
+> ls /etc/kubernetes/pki
+> ls /etc/kubernetes/pki/etcd
+> mkdir backup-certs
+> cp -r /etc/kubernetes/pki   backup-certs
+> ls backup-certs
+> go get github.com/coreos/etcd/etcdctl. Or apt install etcd-client
+> mkdir backup-etcd
+> ETCDCTL_API=3 etcdctl snapshot save backup-etcd/snapshot.db --endpoints=https://[127.0.0.1]:2379   --cacert=/etc/kubernetes/pki/etcd/ca.crt    --cert=/etc/kubernetes/pki/etcd/healthcheck-client.crt  --key=/etc/kubernetes/pki/etcd/healthcheck-client.key
+
+>  ls  backup-etcd
+> kubeadm reset -f 
+> kubectl get nodes
+> cp -r backup-certs/pki   /etc/kubernetes/
+> ls /etc/kubernetes/pki
+
+>  ETCDCTL_API=3 etcdctl snapshot restore backup-etcd/snapshot.db
+> ls default.etcd
+> tree default.etcd/
+> mv default.etcd  /var/lib/etcd/
+> ls /var/lib/etcd
+> tree /var/lib/etcd
+> kubeadm init --ignore-preflight-errors=DirAvailable--var-lib-etcd
+> kubectl get nodes
+
+
+Kubernetes cluster upgrade
+
+To upgrade the master node, run
+*******************************
+kubectl drain master --ignore-daemonsets
+apt update
+apt install kubeadm=1.19.0-00
+kubeadm upgrade apply v1.19.0
+apt install kubelet=1.19.0-00
+kubectl uncordon master
+
+To upgrade the worker nodes, run
+*************************************
+master$ kubectl drain node01 --ignore-daemonsets
+master$ ssh node01
+node01$ apt update
+node01$ apt install kubeadm=1.19.0-00
+node01$ apt install kubelet=1.19.0-00
+node01$ kubeadm upgrade node 
+master$ kubectl uncordon node01
+
+
+	
+*******************************
+
+
+1. Get etcdctl utility if it's not already present.
+Reference: https://github.com/etcd-io/etcd/releases
+ETCD_VER=v3.3.13
+
+# choose either URL
+GOOGLE_URL=https://storage.googleapis.com/etcd
+GITHUB_URL=https://github.com/etcd-io/etcd/releases/download
+DOWNLOAD_URL=${GOOGLE_URL}
+
+rm -f /tmp/etcd-${ETCD_VER}-linux-amd64.tar.gz
+rm -rf /tmp/etcd-download-test && mkdir -p /tmp/etcd-download-test
+
+curl -L ${DOWNLOAD_URL}/${ETCD_VER}/etcd-${ETCD_VER}-linux-amd64.tar.gz -o /tmp/etcd-${ETCD_VER}-linux-amd64.tar.gz
+tar xzvf /tmp/etcd-${ETCD_VER}-linux-amd64.tar.gz -C /tmp/etcd-download-test --strip-components=1
+rm -f /tmp/etcd-${ETCD_VER}-linux-amd64.tar.gz
+
+/tmp/etcd-download-test/etcd --version
+ETCDCTL_API=3 /tmp/etcd-download-test/etcdctl version
+
+mv /tmp/etcd-download-test/etcdctl /usr/bin
+
+2. Backup
+ETCDCTL_API=3 etcdctl --endpoints=https://[127.0.0.1]:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt \
+     --cert=/etc/kubernetes/pki/etcd/server.crt --key=/etc/kubernetes/pki/etcd/server.key \
+     snapshot save /opt/snapshot-pre-boot.db
+
+-----------------------------
+
+Disaster Happens
+
+-----------------------------
+
+3. Restore ETCD Snapshot to a new folder
+ETCDCTL_API=3 etcdctl --endpoints=https://[127.0.0.1]:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt \
+     --name=master \
+     --cert=/etc/kubernetes/pki/etcd/server.crt --key=/etc/kubernetes/pki/etcd/server.key \
+     --data-dir /var/lib/etcd-from-backup \
+     --initial-cluster=master=https://127.0.0.1:2380 \
+     --initial-cluster-token=etcd-cluster-1 \
+     --initial-advertise-peer-urls=https://127.0.0.1:2380 \
+     snapshot restore /opt/snapshot-pre-boot.db
+
+4. Modify /etc/kubernetes/manifests/etcd.yaml
+Update ETCD POD to use the new data directory and cluster token by modifying the pod definition file at /etc/kubernetes/manifests/etcd.yaml. When this file is updated, the ETCD pod is automatically re-created as this is a static pod placed under the /etc/kubernetes/manifests directory.
+Update --data-dir to use new target location
+--data-dir=/var/lib/etcd-from-backup
+Update new initial-cluster-token to specify new cluster
+--initial-cluster-token=etcd-cluster-1
+Update volumes and volume mounts to point to new path
+    volumeMounts:
+    - mountPath: /var/lib/etcd-from-backup
+      name: etcd-data
+    - mountPath: /etc/kubernetes/pki/etcd
+      name: etcd-certs
+  hostNetwork: true
+  priorityClassName: system-cluster-critical
+  volumes:
+  - hostPath:
+      path: /var/lib/etcd-from-backup
+      type: DirectoryOrCreate
+    name: etcd-data
+  - hostPath:
+      path: /etc/kubernetes/pki/etcd
+      type: DirectoryOrCreate
+    name: etcd-certs
+Note: You don't really need to update data directory and volumeMounts.mountPath path above. You could simply just update the hostPath.path in the volumes section to point to the new directory. But if you are not working with a kubeadm deployed cluster, then you might have to update the data directory. That's why I left it as is.
+
+************************************
+JSON path examples
+*********************************
+
+> Use JSON PATH query to fetch node names and store them in /opt/outputs/node_names.txt
+
+   kubectl get nodes -o jsonpath='{.items[*].metadata.name}’  > /opt/outputs/node_names.txt
+
+> Use JSON PATH query to retrieve the osImages of all the nodes and store it in a file /opt/outputs/nodes_os.txt
+
+  kubectl get nodes -o jsonpath='{.items[*].status.nodeInfo.osImage}' > /opt/outputs/nodes_os.txt
+
+>  A kube-config file is present at /root/my-kube-config. Get the user names from it and store it in a file /opt/outputs/users.txt
+
+  kubectl config view --kubeconfig=/root/my-kube-config -o jsonpath='{.users[*].name}' > /opt/outputs/users.txt
+
+> A set of Persistent Volumes are available. Sort them based on their capacity and store the result in the file /opt/outputs/storage-capacity-sorted.txt
+
+   kubectl get pv --sort-by=.spec.capacity.storage > /opt/outputs/storage-capacity-sorted.txt
+
+> That was good, but we don't need all the extra details. Retrieve just the first 2 columns of output and store it in /opt/outputs/pv-and-capacity-sorted.txt
+
+   kubectl get pv --sort-by=.spec.capacity.storage -o custom-columns=NAME:.metadata.name,CAPACITY:.spec.capacity.storage > /opt/outputs/pv-and-capacity-sorted.txt
+
+> Use a JSON PATH query to identify the context configured for the aws-user in the my-kube-config context file and store the result in /opt/outputs/aws-context-name.
+
+  kubectl config view --kubeconfig=/root/my-kube-config -o jsonpath='{.users[].name}’ > /opt/outputs/aws-context-name
+
+
+> # List Services Sorted by Name
+kubectl get services --sort-by=.metadata.name
+
+> # List pods Sorted by Restart Count
+kubectl get pods --sort-by='.status.containerStatuses[0].restartCount'
+
+# List PersistentVolumes sorted by capacity
+kubectl get pv --sort-by=.spec.capacity.storage
+
+# Get the version label of all pods with label app=cassandra
+kubectl get pods --selector=app=cassandra -o \
+  jsonpath='{.items[*].metadata.labels.version}'
+
+# Get all running pods in the namespace
+kubectl get pods --field-selector=status.phase=Running
+
+# Get ExternalIPs of all nodes
+kubectl get nodes -o jsonpath='{.items[*].status.addresses[?(@.type=="ExternalIP")].address}'
+
+# Check which nodes are ready
+JSONPATH='{range .items[*]}{@.metadata.name}:{range @.status.conditions[*]}{@.type}={@.status};{end}{end}' \
+ && kubectl get nodes -o jsonpath="$JSONPATH" | grep "Ready=True"
+
+# List all Secrets currently in use by a pod
+kubectl get pods -o json | jq '.items[].spec.containers[].env[]?.valueFrom.secretKeyRef.name' | grep -v null | sort | uniq
+
+# List all containerIDs of initContainer of all pods
+# Helpful when cleaning up stopped containers, while avoiding removal of initContainers.
+kubectl get pods --all-namespaces -o jsonpath='{range .items[*].status.initContainerStatuses[*]}{.containerID}{"\n"}{end}' | cut -d/ -f3
+
+
+***********
+
+Side car container example
+*******
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: side-car-demo
+spec:
+
+  restartPolicy: Never
+
+  volumes:
+  - name: shared-data
+    emptyDir: {}
+
+  containers:
+
+  - name: nginx-container
+    image: nginx
+    ports:
+      - containerPort: 80
+    volumeMounts:
+    - name: shared-data
+      mountPath: /usr/share/nginx/html
+
+  - name: sidecar-container
+    image: busybox
+    volumeMounts:
+    - name: shared-data
+      mountPath: /pod-data
+    command: ["/bin/sh"]
+    args: ["-c", "while true; do echo $(date -u) >> /pod-data/index.html; sleep 5;done"]
+
+
+
+**********************************
+
+grep "boo" a_file
+grep -n "boo" a_file
+grep -vn "boo" a_file
+grep -c "boo" a_file
+grep -i "BOO" a_file
+grep -x "boo" a_file
+grep -A2 “mach” a_file
+grep "e$" a_file
+grep -E "boots?" a_file
+grep -E "boot|boots" a_file
+grep '\$' a_file
+
+
+awk '{print}' employee.txt
+awk '/manager/ {print}' employee.txt 
+awk '{print $1,$4}' employee.txt 
+awk '{print NR,$0}' employee.txt 
+awk '{print $1,$NF}' employee.txt 
+awk 'NR==3, NR==6 {print NR,$0}' employee.txt 
+awk 'END { print NR }' geeksforgeeks.txt
+
+
+tail -10 cars.csv | awk ‘{BEGIN{FS=“,”;sum=0}{sum=sum+$NF}END{print sum}’
+***************************************
+Multi container deployment : 
+________________________________
+
+
+> kubectl describe deploy multi-container-deployment
+> kubectl set image deployment/multi-container-deployment busybox=busybox nginx=nginx:1.17 --record
+> kubectl set image deploy,rs nginx=nginx:1.16 --all --record
+
+*******************************
+
+kubectl create configmap my-config --from-literal=key1=config1 --from-literal=key2=config2
+kubectl create configmap my-config1 --from-file=path/to/bar
+kubectl create configmap my-config2 --from-file=key1=/path/to/bar/file3.txt --from-file=key2=/path/to/bar/file4.txt
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: command-demo
+  labels:
+    purpose: demonstrate-command
+spec:
+  containers:
+  - name: command-demo-container
+    image: debian
+    volumeMounts:
+      - name: config
+        mountPath: "/config"
+        readOnly: true
+    env:
+    - name: MESSAGE
+      value: "hello world"
+    command: ["/bin/sh"]
+    args: ["-c", "while true; do echo hello; sleep 10;done"]
+  volumes:
+    - name: config
+      configMap:
+        name: my-config
+
+*******************
+Network policies
+****************
+DENY all traffic to an application: 
+************************************
+
+kubectl run  web --image=nginx --labels app=web --expose --} 80
+kubectl run tester --rm -i -t --image=alpine  -- sh
+wget -qO- --timeout=5 http://myweb:9000
+
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: web-deny-all
+spec:
+  podSelector:
+    matchLabels:
+      app: web
+  ingress: []
+
+wget -qO- --timeout=2 http://web
+
+LIMIT traffic to an application: 
+***********************************
+
+kubectl run  apiserver --image=nginx --labels app=bookstore,role=api --expose --} 80
+
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: api-allow
+spec:
+  podSelector:
+    matchLabels:
+      app: bookstore
+      role: api
+  ingress:
+  - from:
+      - podSelector:
+          matchLabels:
+            app: bookstore
+      - namespaceSelector:
+          matchLabels:
+            app: bookstore
+
+kubectl apply -f api-allow.yaml
+
+kubectl run tester  -i -t --image=alpine -- sleep 1000
+wget -qO- --timeout=2 http://apiserver
+
+kubectl run v1  --rm -i -t --image=alpine --labels app=bookstore,role=frontend -- sh
+wget -qO- --timeout=2 http://apiserver
+
+Note: Its not allowing pods in other namespaces
+
+ALLOW all traffic to an application:
+**********************************
+kubectl run web --image=nginx \
+    --labels=app=web --expose --} 80
+
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: web-allow-all
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      app: web
+  ingress:
+  - {}
+
+kubectl apply -f web-allow-all.yaml
+
+kubectl run v1 --rm -i -t --image=alpine -- sh
+wget -qO- --timeout=2 http://web
+
+Note: Its not allowing pods in other namespaces
+
+DENY all non-whitelisted traffic to a namespace
+*************************************
+
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: default-deny-all
+  namespace: default
+spec:
+  podSelector: {}
+  ingress: []
+
+kubectl apply -f default-deny-all.yaml
+
+Note: It is blocking from all namespaces 
+
+DENY all traffic from other namespaces
+*************************************
+kubectl create namespace secondary
+kubectl run  web --namespace secondary --image=nginx \
+    --labels=app=web --expose --} 80
+
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  namespace: secondary
+  name: deny-from-other-namespaces
+spec:
+  podSelector:
+    matchLabels:
+  ingress:
+  - from:
+    - podSelector: {}
+
+kubectl apply -f deny-from-other-namespaces.yaml
+
+kubectl run v1  --namespace=default --rm -i -t --image=alpine -- sh
+wget -qO- --timeout=2 http://web.secondary
+
+kubectl run v1 --namespace=secondary --rm -i -t --image=alpine -- sh
+wget -qO- --timeout=2 http://myweb.default.svc.cluster.local
+
+====
+curl -LO https://k8smastery.com/shpod.yaml
+
+128: 40
+256: 64
+384 : 96
+512 : 128
+
+https://www.samltool.com/fingerprint.php
+
+kubectl attach -n shpod -it shpod
+8d26149b0d88e0cec698c9fb164aa5f2e304c541   : 40
+ef1fd359fc241030d5a86269aa8575e080516c1a3e39852bdf40a47415afd2ab : 64
+66c0485588c52903bc1ace9f5748c4842dfb7af8a891afb2c35f5ba7c35d83577223e8ac25efd1b4de4ef352b1b87666 : 96
+a06c3383d2d79d6409a9f7e71ac0df035544f85dd29261b40294d08d37eab86754840db3c26e2d8bfde0c9be006050b1a0380a3ab73202dfd0717c94a8395685 : 128
+
+kubectl get pods -A -o json | jq '{ Pod: .items[].metadata.name, Container: .items[].spec.containers[].name }' | jq .[]
+
+kubectl get pods -A -o json | jq -r '.items[].spec.containers[].name' | sort -u
+
+
+myweb.yaml:
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: web
+  name: myweb
+spec:
+  ports:
+  - name: http
+    }: 9000
+    protocol: TCP
+    targetPort: 9000
+  selector:
+    app: web
+---
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    app: web
+  name: myweb
+spec:
+  containers:
+  - image: nginx
+    name: myweb
+    ports:
+    - containerPort: 9000
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-}-from-namespace
+  namespace: default
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          app: web
+    ports:
+    - protocol: TCP
+      }: 9000
+
+kubectl delete -f allow-}.yaml
+
+kubectl delete -f myweb.yaml
+
+kubectl apply -f allow-}.yaml
+
+kubectl apply -f myweb.yaml
+
+
+wget -qO- --timeout=2 http://myweb.default.svc.cluster.local
+
+kubectl run tester --namespace=team-a --rm -i -t --image=alpine -- sh
+wget -qO - --timeout=2 http://myweb.default.svc.cluster.local:9000
+
+kubectl run mycurl --image=tutum/curl  -- sleep 1000
+kubectl exec mycurl -it -- sh 
+curl -L http://myweb.default.svc.cluster.local
+
+==
+https://www.projectcalico.org/comparing-kube-proxy-modes-iptables-or-ipvs/
+https://www.projectcalico.org/introducing-the-calico-ebpf-dataplane/
+https://ebpf.io/
+extended Berkeley Packet Filter (eBPF) 
+classic” BPF (cBPF)
+XDP (eXpress Data Path)
+LLVM
+LLVM is currently the only compiler suite providing a BPF back end. gcc does not support BPF at this point.
+
+==
+LLVM Core libraries provide a modern source- and target-independent optimizer, 
+along with code generation support for many popular CPUs 
+(as well as some less common ones!) 
+These libraries are built around a well specified code representation known as the 
+LLVM intermediate representation ("LLVM IR"). 
+
+~ Clang is an "LLVM native" C/C++/Objective-C compiler, which aims to deliver amazingly 
+fast compiles, extremely useful error and warning messages and to provide a platform 
+for building great source level tools.
+
+~ The LLDB project builds on libraries provided by LLVM and Clang to provide a great 
+native debugger
+~ The libc++ and libc++ ABI projects provide a standard conformant and high-performance implementation of 
+the C++ Standard Library
+~The compiler-rt project provides highly tuned implementations of the 
+low-level code generator support routines
+
+~ The MLIR subproject is a novel approach to building 
+reusable and extensible compiler infrastructure.
+
+~ The OpenMP subproject provides an OpenMP runtime 
+for use with the OpenMP implementation in Clang.
+~ The polly project implements a suite of 
+  cache-locality optimizations as well as 
+  auto-parallelism and 
+  vectorization using a 
+  polyhedral model.
+~The libclc project aims to implement 
+the OpenCL standard library
+
+~ The klee project implements 
+a "symbolic virtual machine" which uses a theorem prover to try to 
+evaluate all dynamic paths through a program 
+in an effort to find bugs and 
+to prove properties of functions. 
+A major feature of klee is that it can 
+produce a testcase 
+in the event that it detects a bug
+
+The LLD project is a new linker. 
+That is a drop-in replacement for system linkers and runs much faster.
+
+
+
+systemd allows for IPv4/v6 accounting as well as implementing network access control 
+for its systemd units based on BPF’s cgroup ingress and egress hooks. Accounting is 
+based on packets / bytes, and ACLs can be specified as address prefixes for allow / deny rules. More information can be found at:
+
+networking specific use including loading BPF programs with tc (traffic control) 
+and XDP (eXpress Data Path), and to aid with developing Cilium’s BPF templates.
+
+cat /proc/sys/net/core/bpf_jit_harden
+sudo cat /proc/sys/net/core/bpf_jit_harden
+
+===
+
+https://jsravn.com/2017/12/24/ipvs-with-kubernetes-ingress/
+
+L4 LB - IPVS
+  Local connectiion state db - etcd ?
+  consistent hashing
+    source hashing along with }  -distribution of connections
+    Next real server if server it it dies - For Draining of ingress nodes for updates, reboots
+    Allow passive nodes to handle pre-existing TCP connections
+     -  net.ipv4.vs.sloppy_tcp=1 : 
+        IPVS will still serve TCP packets it doesn’t handle the initial SYN for
+        allows IPVS to create connection state on any
+        packet, not just a TCP SYN (or SCTP INIT).
+    net.ipv4.vs.schedule_icmp properly schedules ICMP packets 
+           required for correct TCP functioning.
+    net.ipv4.vs.expire_nodest_conn=1 - remove stale/dead connections so further packets will get resets, 
+          letting clients quickly retry.
+    net.ipv4.vs.conn_reuse_mode=2 so IPVS can properly detect terminated connections 
+          with direct return. Without this, it’s possible for source } 
+          reuse to lead to broken connections.
+  State sync between IPVS processes
+
+==
+ Daniel J. Bernstein - djbdns
+ dbndns - debian dns
+
+Servers
+dnscache — the DNS resolver and cache.
+tinydns — a database-driven DNS server.
+walldns — a "reverse DNS wall", providing IP address-to-domain name lookup only.
+rbldns — a server designed for DNS blacklisting service.
+pickdns — a database-driven server that chooses from matching records depending on the requestor's location. (This feature is now a standard part of tinydns.)
+axfrdns — a zone transfer server.
+Client tools
+axfr-get — a zone-transfer client.
+dnsip — simple address from name lookup.
+dnsipq — address from name lookup with rewriting rules.
+dnsname — simple name from address lookup.
+dnstxt — simple text record from name lookup.
+dnsmx — mail exchanger lookup.
+dnsfilter — looks up names for addresses read from stdin, in parallel.
+dnsqr — recursive general record lookup.
+dnsq — non-recursive general record lookup, useful for debugging.
+dnstrace (and dnstracesort) — comprehensive testing of the chains of authority over DNS servers and their names.
+==
+Face book loadbalncing:
+
+~Data link layer :
+ECMP hash :
+Equal-cost multi-path routing (ECMP) is a routing strategy 
+where packet forwarding to a single destination can occur over 
+multiple best paths with equal routing priority.
+
+DNS cartogrpaher - 
+  Dependency map :
+    complete dependencies view
+    Route dependency view
+    Endpoint dependency view
+    Config settings view
+    Distributed root cause analysis by agents
+    Local and remote event correlation
+    Self-managing, self-healing cooperative agents
+
+~Transport layer: TCP Routing
+L4 LB : SHIV, IP Virtual server
+
+
+~ app layer : TCP + TLS + HTTP
+L7 LB
+Proxygen - HTTP/SPDY - State table + hash
+What is Direct Server Return ???
+
+Web layer:
+HHVM - HipHop VM
+
+BGP : Border gate way protocol
+
+Edge  Points of Presence :
+  The Locations where corp network interconnects with other networks.
+  This is where the corp interconnect via peering 
+  with other network operators who then deliver corp traffic to users.
+
+Payment for peering
+  Paying for peering
+  Settlement-Free peering
+
+Payment for data transit:
+  Paying for transit
+  Settlement-Free Transit
+
+
+
+~Tier 1 Network provider :
+  - Settlement-free peering
+  - Settlement-free transit
+IP network that can reach every other network on the Internet solely via 
+settlement-free interconnection (also known as settlement-free peering)
+
+It must be a transit-free network (purchases no transit) 
+that peers for free with every other Tier 1 network and 
+can reach all major networks on the Internet.
+
+~Tier 2 Network provider:
+  - Settlement-free peering with some networks, but pays for transit
+  - Paying for peering with some networks
+
+~Tier 3 Network provider:
+  - Purchases peering
+  - Purchases transit
+
+Global Network backbone
+Global Peering Locations
+
+https://medium.com/martinomburajr/distributed-computing-tcp-vs-http-s-load-balancing-7b3e9efc6167
+
+
+An Internet exchange point (IX or IXP) is 
+the physical infrastructure through which 
+Internet service providers (ISPs) and content delivery networks (CDNs) 
+exchange Internet traffic between their networks (autonomous systems).[1]
+
+
+Internet Service provider
+
+round-trip delay (RTD) or round-trip time (RTT)
+
+L1 Bits
+  L2 Ethernet Frame - IEEE
+    IP in IP encapsulation : IP Packet from IPVS
+    L3 IP Packet 
+      L4 TCP segment 
+        L5 Session
+          L6 TLS Encrypt/Decrypt presenation
+            L7 HTTP/SPDY/FTP/SMTP
+
+==
+TCP Session
+   client                               Server
+   -------                              --------
+          >--- TCP Syn     --->
+          <--- TCP Syn+Ack ---<
+          >--- TCP ACK     --->
+SSL Session
+          >--- client Hello --->
+          <--- Server Hello ---<
+          >--- ChangeCipherSpec --->
+          <--- ChangeCipherSpec ---<<
+HTTP Req/Res:
+          >--- HTTP Get Request --->
+          <--- Server HTTP Response ---<
+
+kubectl get deployments -n admin2406 -o custom-columns=DEPLOYMENT:.metadata.name,CONTAINER_IMAGE
+:.spec.template.spec.containers[*].image,READY_REPLICAS:.status.readyReplicas,NAMESPACE:.metatdata.namespace
+
+*************************
+RBAC
+********
+
+openssl genrsa -out mali.key 2048
+openssl req -new -key mali.key -out mali.csr
+
+openssl rsa -in mali.key -pubout > mali.pub
+
+MYCSR=$(cat mali.csr | base64 | tr -d "\n")
+echo $MYCSR
+cat <<EOF | kubectl apply -f -
+apiVersion: certificates.k8s.io/v1
+kind: CertificateSigningRequest
+metadata:
+  name: csr-mali
+spec:
+  groups:
+  - system:authenticated
+  request: $MYCSR
+  signerName: kubernetes.io/kube-apiserver-client
+  usages:
+  - client auth
+EOF
+
+kubectl get csr csr-mali
+kubectl certificate approve csr-mali
+
+kubectl get csr csr-mali -o jsonpath='{.status.certificate}' | base64 -d > mali.crt
+
+kubectl create role devrole --verb=create --verb=get --verb=list --verb=update --verb=delete --resource=pods
+
+kubectl create rolebinding rb-devrole-mali --role=devrole --user=mali
+
+kubectl config set-credentials mali --client-key=/home/vagrant/mali-rbac/mali.key --client-certificate=/home/vagrant/mali-rbac/mali.crt --embed-certs=true
+user mali set
+
+kubectl config set-context mali-context --cluster=kubernetes --user=mali
+
+kubectl config use-context kubernetes-admin@kubernetes
+
+
+kubectl config set-context kubernetes-admin@kubernetes --cluster=kubernetes --user=kubernetes-admin
+
+> kubectl auth can-i list pods --as=mali  --as-group=tester -n testing
+
+
+Be sure to include all relevant groups with multiple --as-group params. 
+you typically need to include --as-group=system:authenticated in order to 
+have permission to run a selfsubjectaccessreview check.
+
+Because group membership is provided by the authenticators configured for your cluster, 
+the mapping from a username to a set of groups is external to kubernetes 
+and dependent on your configured providers.
+
+kubectl create sa sa1 -n myns
+kubectl create sa sa2 -n myns
+kubectl create sa sa3 -n myns
+history
+kubectl create role myrole --resource=pods --verb=create -n myns
+kubectl create rolebinding rb-myrole-sa1 -n myns --role=myrole --serviceaccount=myns:sa1
+kubectl create rolebinding rb-myrole-sa2 -n myns --role=myrole --serviceaccount=myns:sa2
+kubectl create rolebinding rb-myrole-myns-sas -n myns --role=myrole --group=system:serviceaccounts:myns
+kubectl create rolebinding rb-myrole-cluster-sas -n myns --role=myrole --group=system:serviceaccounts
+kubectl auth can-i create pods -n myns --as=system:serviceaccount:myns:sa1
+kubectl auth can-i create pods -n myns --as=system:serviceaccount:myns:sa2
+kubectl auth can-i create pods -n myns --as=system:serviceaccount:myns:sa3
+kubectl auth can-i create pods -n myns --as=system:serviceaccount:myns
+kubectl auth can-i create pods -n myns --as=system:serviceaccount:myns:sa3 --as-group=system:serviceaccounts:myns  
+kubectl auth can-i create pods -n myns --as=system:serviceaccount:myns:sa3 --as-group=system:serviceaccounts
+
+
+kubectl get -n myns rolebinding rb-myrole-sa1 -o yaml
+
+kubectl create clusterrole myclusterrole --resource=pods --verb=list 
+kubectl create rolebinding rb-myclusterrole-sa1 -n myns --clusterrole=myclusterrole --serviceaccount=myns:sa1
+kubectl create rolebinding rb-myclusterrole-sa2 -n myns --clusterrole=myclusterrole --serviceaccount=myns:sa2
+kubectl create rolebinding rb-myclusterrole-myns-sas -n myns  --clusterrole=myclusterrole --group=system:serviceaccounts:myns
+kubectl create rolebinding rb-myclusterrole-cluster-sas -n myns  --clusterrole=myclusterrole --group=system:serviceaccounts
+
+kubectl auth can-i list pods -n myns --as=system:serviceaccount:myns:sa1
+kubectl auth can-i list pods -n myns --as=system:serviceaccount:myns:sa2
+kubectl auth can-i list pods -n myns --as=system:serviceaccount:myns
+kubectl auth can-i list pods -n myns --as=system:serviceaccount:myns:sa3 --as-group=system:serviceaccounts:myns  
+kubectl auth can-i list pods -n myns --as=system:serviceaccount:myns:sa3 --as-group=system:serviceaccounts
+
+kubectl create clusterrole new-clusterrole --resource=deployments --verb=create 
+kubectl create clusterrolebinding crb-myclusterrole-sa1 --clusterrole=new-clusterrole --serviceaccount=myns:sa1
+
+kubectl auth can-i create deployments --as=system:serviceaccount:myns:sa1
+
+
+
+kubectl create ns ns-test
+kubectl create sa sa-test -n ns-test
+kubectl create clusterrole cr-test --resource=daemonsets,replicasets --verb=create 
+kubectl create clusterrolebinding crb-test --clusterrole=cr-test --serviceaccount=ns-test:sa-test
+
+kubectl auth can-i create daemonsets --as=system:serviceaccount:ns-test:sa-test
+
+Side car container 
+***************
+
+
+  apiVersion: v1
+  kind: Pod
+  metadata:
+    name: two-containers
+  spec:
+    restartPolicy: Never
+    volumes:
+    - name: logs 
+      emptyDir: {}
+    containers:
+    - name: producer
+      image: busybox
+      volumeMounts:
+      - name: logs 
+        mountPath: /var/log1
+      args:
+      - /bin/sh
+      - -c
+      - "while true; do echo $(date) hello world >> /var/log1/app.log && sleep 5; done"
+    - name: sidecar
+      image: busybox
+      args:
+      - /bin/sh
+      - -c
+      - "tail -n+1 -f /var/log2/app.log"
+      volumeMounts:
+      - name: logs 
+        mountPath: /var/log2
+
+  command1 && command2
+
+
+  [X]$ iptables 
+  --table nat 
+    --append PREROUTING 
+  --protocol tcp 
+  --dport 80 
+  
+  --jump DNAT 
+    --to-destination 10.0.4.2
+*************************************************
+kubectl create ns fubar
+kubectl create ns corp-net
+kubectl label ns corp-net ns=corp-net
+
+kubectl run nginx --image=nginx -n fubar 
+kubectl expose -n fubar pod nginx --} 80
+
+
+export nginx_ep=$(kubectl get ep nginx -n fubar --no-headers|awk '{print $2}')
+echo ${nginx_ep}
+export nginx_ip=$(kubectl get ep nginx -n fubar --no-headers|awk '{print $2}' | awk 'BEGIN{ FS=":"; }{ print $1 }')
+echo ${nginx_ip}
+export nginx_name=$(kubectl get ep nginx -n fubar --no-headers|awk '{print $2}' | awk 'BEGIN{ FS=":"; }{ print $1 }'|awk 'BEGIN{ FS=".";OFS="-"; }{ print $1,$2,$3,$4 ".fubar.pod.cluster.local" }')
+echo ${nginx_name}
+kubectl run busybox --image=busybox:1.28 -n corp-net -- sleep 1000
+kubectl run busybox --image=busybox:1.28 -- sleep 1000
+
+All four should work :
+kubectl exec -n corp-net busybox -it -- wget -qO- --timeout=2 nginx.fubar.svc.cluster.local:80
+
+kubectl exec -n corp-net busybox -it -- wget -qO- --timeout=5 ${nginx_name}
+
+kubectl exec -n default busybox -it -- wget -qO- --timeout=2 nginx.fubar.svc.cluster.local:80
+
+kubectl exec -n default busybox -it -- wget -qO- --timeout=5 ${nginx_name}
+
+sudo iptables-save | sudo tee -a init-rules.txt
+
+
+Deny all ingress:
+****************
+
+kubectl create -f - <<EOF
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-ingress
+  namespace: fubar 
+spec:
+  podSelector:
+    matchLabels: {}
+  policyTypes:
+  - Ingress
+EOF
+
+sudo iptables-save | sudo tee -a deny-all-rules.txt
+
+All four should fail :
+kubectl exec -n corp-net busybox -it -- wget -qO- --timeout=2 nginx.fubar.svc.cluster.local:80
+
+kubectl exec -n corp-net busybox -it -- wget -qO- --timeout=5 ${nginx_name}
+
+kubectl exec -n default busybox -it -- wget -qO- --timeout=2 nginx.fubar.svc.cluster.local:80
+
+kubectl exec -n default busybox -it -- wget -qO- --timeout=5 ${nginx_name}
+
+kubectl exec -n default busybox -it -- wget -qO- --timeout=5 ${nginx_ep}
+
+kubectl exec -n default busybox -it -- wget --spider --timeout=5 ${nginx_ep}
+
+
+Allow ingress to all pods in fubar only from pods in corp-net namespace at } 80
+*******************************************************************************
+kubectl create -f - <<EOF
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-corp-net-policy
+  namespace: fubar
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+           ns: corp-net
+    ports:
+    - protocol: TCP
+      }: 80
+EOF
+
+kubectl delete -f - <<EOF
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-corp-net-policy
+  namespace: fubar
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+           ns: corp-net
+    ports:
+    - protocol: TCP
+      }: 80
+EOF
+
+sudo iptables-save | sudo tee -a allow-corp-net-rules.txt
+
+Label the pod
+
+kubectl label -n corp-net pod busybox  ns=corp-net
+
+kubectl create -f - <<EOF
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-corp-net-policy
+  namespace: fubar
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+           ns: corp-net
+      podSelector:
+        matchLabels:
+          ns: corp-net
+    ports:
+    - protocol: TCP
+      }: 80
+EOF
+
+sudo iptables-save | sudo tee -a allow-corp-net-pods-rules.txt
+
+
+Succeed:
+
+
+kubectl exec -n corp-net busybox -it -- wget -qO- --timeout=2 nginx.fubar.svc.cluster.local:80
+
+kubectl exec -n corp-net busybox -it -- wget -qO- --timeout=5 ${nginx_name}
+
+kubectl exec -n default busybox -it -- wget -qO- --timeout=2 nginx.fubar.svc.cluster.local:80
+
+kubectl exec -n default busybox -it -- wget -qO- --timeout=5 ${nginx_name}
+
+kubectl exec -n default busybox -it -- wget -qO- --timeout=5 ${nginx_ep}
+
+kubectl exec -n default busybox -it -- wget --spider --timeout=5 ${nginx_ep}
+
+====
+--k delete -n corp-net pod busybox1
+
+kubectl run busybox1 --image=busybox:1.28 -n corp-net -- sleep 1000
+
+kubectl delete -f - <<EOF
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-corp-net-policy
+  namespace: fubar
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+           ns: corp-net
+      podSelector:
+        matchLabels:
+          ns: corp-net
+    ports:
+    - protocol: TCP
+      }: 80
+EOF
+
+kubectl apply -f - <<EOF
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-corp-net-policy
+  namespace: fubar
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+           ns: corp-net
+      podSelector:
+        matchLabels: {}
+    ports:
+    - protocol: TCP
+      }: 80
+EOF
+
+sudo iptables-save | sudo tee -a allow-corp-net-pods-all-rules.txt
+
+
+kubectl exec -n corp-net busybox -it -- wget -qO- --timeout=2 nginx.fubar.svc.cluster.local:80
+
+kubectl exec -n corp-net busybox -it -- wget -qO- --timeout=5 ${nginx_name}
+
+should work, even without label:
+kubectl exec -n corp-net busybox1 -it -- wget -qO- --timeout=2 nginx.fubar.svc.cluster.local:80
+
+kubectl exec -n corp-net busybox1 -it -- wget -qO- --timeout=5 ${nginx_name}
+
+==
+it should have failed, but it worked :
+kubectl exec -n default busybox -it -- wget -qO- --timeout=2 nginx.fubar.svc.cluster.local:80
+
+kubectl exec -n default busybox -it -- wget -qO- --timeout=5 ${nginx_name}
+
+kubectl exec -n default busybox -it -- wget -qO- --timeout=5 ${nginx_ep}
+
+kubectl exec -n default busybox -it -- wget --spider --timeout=5 ${nginx_ep}
+
+===
+
+kubectl delete -f - <<EOF
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-corp-net-policy
+  namespace: fubar
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+           ns: corp-net
+      podSelector:
+        matchLabels: {}
+    ports:
+    - protocol: TCP
+      }: 80
+EOF
+
+kubectl create -f - <<EOF
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-corp-net-policy
+  namespace: fubar
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+           ns: corp-net
+      podSelector:
+        matchLabels:
+          ns: corp-net
+    ports:
+    - protocol: TCP
+      }: 80
+EOF
+
+should work with label :
+kubectl exec -n corp-net busybox -it -- wget -qO- --timeout=2 nginx.fubar.svc.cluster.local:80
+
+kubectl exec -n corp-net busybox -it -- wget -qO- --timeout=5 ${nginx_name}
+
+should not work, since it is  without label:
+kubectl exec -n corp-net busybox1 -it -- wget -qO- --timeout=2 nginx.fubar.svc.cluster.local:80
+
+kubectl exec -n corp-net busybox1 -it -- wget -qO- --timeout=5 ${nginx_name}
+
+should not work, other namespace, no label:
+kubectl exec -n default busybox -it -- wget -qO- --timeout=2 nginx.fubar.svc.cluster.local:80
+
+kubectl exec -n default busybox -it -- wget -qO- --timeout=5 ${nginx_name}
+
+====
+https://www.stackrox.com/assets/#demos-and-videos
+https://www.stackrox.com/post/2019/04/setting-up-kubernetes-network-policies-a-detailed-guide/
+
+
+
+
+k get deploy -n  admin2406 -o custom-columns=DEPLOYMENT:.metadata.name,CONTAINER_IMAGE:
+.spec.template.spec.containers[*].image[*]
+
+kubectl apply -f - <<EOF
+
+cat <<EOF |sudo tee log-demo.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: log-demo
+  labels:
+    app: log-demo
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: log-demo
+  template:
+    metadata:
+      labels:
+        app: log-demo
+    spec:
+      restartPolicy: Never
+      volumes:
+      - name: shared-data
+        emptyDir: {}
+      containers:
+      - name: logs-demo
+        image: nginx
+        args:
+        - /bin/bash
+        - -c
+        - "while true; do echo $(date) hello world   && sleep 3;done"      
+        volumeMounts:
+        - name: shared-data
+          mountPath: /var/log1
+EOF
+
+
+for i in {1..30}
+do
+  echo line number ${i}
+done > tail-demo.txt
+
+head tail-demo.txt
+
+head -10 tail-demo.txt
+
+head -c 100 tail-demo.txt
+
+tail tail-demo.txt
+
+tail -10 tail-demo.txt
+
+tail  -c 100 tail-demo.txt
+tail -1 tail-demo.txt
+tail -2 tail-demo.txt
+
+
+tail -n+9 tail-demo.txt
+
+tail -n 2 -f -s 3 --retry tail-demo.txt
+
+tail -q -n 2  -s 3 -F tail-demo.txt
+
+
+i=31
+while true;
+do
+  echo line number ${i}
+  sleep 1
+  ((i = i+1))
+done >> tail-demo.txt
+
+===
+3721, fd =7
+
+
+port=6443
+echo $port
+pid=$(sudo fuser ${port}/tcp | awk -F " " '{ print $NF }')
+echo $pid
+pidgre=$( echo ${pid} |sed 's/^\(.\)\(.*\)/[\1]\2/1' )
+echo ${pidgre}
+ps aux | grep -E ${pidgre} | sed 's/\(.*\) \(--etcd-servers=\)\(.*\s\)(--.*)/\3/1'
+ps aux | grep -E ${pidgre} | sed 's\(.*\) \(--advertise-address=\)\(.*\) \(--.*\)/\3/'
+
+sed 's/^\(.*--etcd-servers=\)\(.*\) (.*)/\2/1'
+--etcd-servers=
+
+sudo ss -tulpn | grep :${port}
+sudo lsof -i :${port}
+sudo fuser ${port}/tcp
+
+
+//pid=$(sudo lsof -i :${port})
+//echo $pid
+
+sudo ls -l /proc/$pid/exe
+
+sudo ls -l /proc/${pid}/cwd
+
+pwdx $pid
+owner
+ps aux | grep ${pid}
+
+
+
+
+substitute first caracter with [1]234
+echo '1234' | sed 's/^\(\s*\)\(1\)/\1[\1]/1'
+
+echo '1234' | grep "sed -i 's/^\(.\)\(2\)/[\1]\2/1'"
+
+FILE=/home/vagrant/nc_home/nc.}.new
+if [ -f "$FILE" ]; then
+    echo "kill process and restart new process "
+    read -r -u3 PORT <&3 3< $FILE
+
+else 
+    echo "$FILE does not exist."
+fi
+
+===
+
+kubectl run nginx-test --image=nginx
+kubectl expose pod nginx-test --port=8080 --target-port=80 --name frontend1
+kubectl expose svc frontend1 --port=8888  --target-port=443 --name frontend2
+
+kubectl get pod nginx-test -o yaml
+kubectl get svc frontend1 -o yaml
+kubectl get svc frontend2 -o yaml
+
+kubectl run busybox --image=busybox -- sleep 1000
+kubectl exec busybox -it -- wget -qO- http://frontend1.default.svc.cluster.local:8080
+
+kubectl exec busybox -it -- wget -qO- http://frontend1:8080
+
+
+kubectl exec busybox -it -- nslookup _http._TCP.frontend1.default.svc.cluster.local
+
+dig @10.96.0.10 frontend1.default.svc.cluster.local A
+
+dig @10.96.0.10 _http._TCP.frontend1.default.svc.cluster.local SRV
+
+======
+vagrant@master-1:~/nc_home$ kubectl get pod nginx-test -o yaml
+
+cat <<EOF | sudo tee socat-web.yaml
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    run: nginx-test
+  name: nginx-test
+  namespace: default
+spec:
+  containers:
+  - image: nginx
+    imagePullPolicy: Always
+    name: nginx-test
+    ports:
+    - name: http
+      protocol: TCP
+      containerPort: 8081
+  dnsPolicy: ClusterFirst
+  enableServiceLinks: true
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    run: nginx-test
+  name: frontend1
+  namespace: default
+spec:
+  ports:
+  - name: http
+    port: 8080
+    protocol: TCP
+    targetPort: http
+  selector:
+    run: nginx-test
+  sessionAffinity: None
+  type: ClusterIP
+---
+EOF
+
+service (name,port,targetPort//port)
+
+vagrant@master-1:~/nc_home$ kubectl get svc frontend2 -o yaml
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    run: nginx-test
+  name: frontend2
+  namespace: default
+spec:
+  ports:
+  - port: 8888
+    protocol: TCP
+    targetPort: 443
+  selector:
+    run: nginx-test
+  sessionAffinity: None
+  type: ClusterIP
+
+======
+kubectl apply -f - <<EOF
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    run: nginx-test
+  name: nginx-test4
+  namespace: default
+spec:
+  containers:
+  - image: nginx
+    imagePullPolicy: Always
+    name: nginx-test
+    ports:
+    - name: http
+      protocol: TCP
+      containerPort: 933
+  dnsPolicy: ClusterFirst
+  enableServiceLinks: true
+EOF
+
+
