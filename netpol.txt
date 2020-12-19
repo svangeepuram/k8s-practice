@@ -125,6 +125,17 @@ kubectl delete pod,service web
 kubectl delete networkpolicy web-allow-all web-deny-all
 
 ==========
+4. Liit access to current name space:
+
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: default-deny-all
+  namespace: default
+spec:
+  podSelector: {}
+  ingress: []
+  
 deny ingress :
 
 Target pod/service :
