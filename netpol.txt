@@ -21,7 +21,7 @@ tester:
 Persistent tester :
 kubectl run busybox --image=busybox -- sleep 1000
 kubecctl  exec busybox -it -- wget --spider --timeout=1 nginx
-it
+
 Test without label : it should not work
 kubectl run busybox --rm -ti --image=busybox -- wget --spider --timeout=1 nginx
 
@@ -30,7 +30,35 @@ kubectl run busybox --rm -ti --labels="access=true" --image=busybox --  wget --s
 kubectl run busybox --rm -ti --labels="access=true" --image=busybox --  wget -qO - --timeout=1 nginx
 ========
 
+Allow ingress based on podSelector:
 
+kubectl apply -f - <<EOF
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: api-allow
+spec:
+  podSelector:
+    matchLabels:
+      app: bookstore
+      role: api
+  ingress:
+  - from:
+      - podSelector:
+          matchLabels:
+            app: bookstore
+ EOF
+ 
+ Target pod :
+ kubectl run apiserver --image=nginx --labels app=bookstore,role=api --expose --port 80
+ 
+1. Tester pod without required lable ...it would fail:
+
+kubectl run --generator=run-pod/v1 test-$RANDOM --rm -i -t --image=alpine -- wget -qO- --timeout=2 http://apiserver
+
+2. Tester pod with required lable ...it would work: 
+
+kubectl run test-$RANDOM --rm -i -t --image=alpine --labels app=bookstore,role=frontend -- wget -qO- --timeout=2 http://apiserver
 
 
 =========
