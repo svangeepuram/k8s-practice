@@ -1,0 +1,229 @@
+
+http://www.ultramonkey.org/papers/lvs_tutorial/html/
+https://www.kernel.org/doc/Documentation/networking/ipvs-sysctl.txt
+https://lvs-users.linuxvirtualserver.narkive.com/iIEPVtf2/sloppy-tcp-sctp-sh-fallback-and-l4-hashing
+
+https://github.com/kubernetes/community/pull/692
+http://www.linuxvirtualserver.org/docs/sync.html#:~:text=An%20ipvs%20syncmaster%20daemon%20is,and%20create%2Fchange%20corresponding%20connections.
+
+For example, the primary must transfer the following state of each connection to the backup(s):
+
+	<Protocal, CIP:CPort, VIP:VPort, RIP:RPort, Flags, State>
+which need 24bytes at least. Supposing the load balancer is working at 5,000 connections/second, then the load balancer needs to transfer 120KBytes at least to the backup every second.
+
+https://www.practicalnetworking.net/series/arp/gratuitous-arp/#:~:text=A%20Gratuitous%20ARP%20is%20an,mapping%20to%20the%20entire%20network.
+
+gratutous arp:
+    I am the enw manager ...plsease note that this is my number ...
+    note it down, repport me further
+    VM jumps to new physical server
+        Same IP, new AMC
+    New node joins network - let others know (ip,amc)
+    Redunandancy:
+        share ip , as a default gateway
+            primary : (ip,mac1)
+            secondary: (ip,mac2)
+                IP 10.0.0.1 is now being served by the other router’s MAC address.
+            switch
+                shared (ip,mac)
+                primary: port1
+                secondary port2
+                on GARP, port# is updated to all hosts
+                frame sent to mac#, will egress to correct switch port
+
+
+
+Linux director
+    actie active directors
+    Netfiler connection tracking vs Connection sync
+        connectons accepted by saru/ rejected bby saru ????
+Heartbeat:
+Heartbeat be used to monitor a pair of linux directors and ensure that 
+one of them owns the VIP at any given time.
+For the sake of this discussion we will be using an IP address as a resource. 
+When fail-over occurs the IP address is obtained using a method known as 
+IP address take-over. This works by the newly activated 
+linux director sending gratuitous ARP packets for the VIP. 
+All hosts on the network should receive these ARP packets 
+and thus send subsequent packets for the VIP to the new linux director.
+    
+    
+    Saru - Heartbeat helper runs on each director
+        Helper netfiler module
+        Helper iptables user space module
+        Helper user space counterpart, which ineteracts with Heartbeat
+        Saru means monkey in Japanese. It's the work I did in Japan on Ultra Monkey..
+        saru - elect the master which allocates the connections
+
+switch between active and stand-by linux directors.
+keepalived
+        keepalived master
+        keepalived slave
+        Keepalived provides an implementation of the VRRPv2 protocol
+        simple state engine. 
+        Hosts advertise their availability. 
+        The highest priority host wins the resource (???) and advertises this fact. 
+        All other nodes then go into the backup state.
+connections:
+    plain html request
+        disk io
+        memory
+    scale an image
+    database query
+
+Real server : eg apache
+    Realtime serving capacity ?
+        Feedbackd
+            feedbackd-master on linux director
+                manipulates weights of the real servers in VS Kernel table
+            feedbackd-agent on real server
+                /proc/stat CPU load
+    Real server health checks:
+        Keepalive daemon - active/standby director
+        LDirecotrd
+
+
+Kernel table ?
+Virtual server table (Kernal table???)
+Director - Connection table
+    Connection sync master daemon
+    Connection sync backp daemon
+        In-kernel daemons - stop them
+        User space daemons - migrate to them
+    master slave vs peer to peer?
+
+    sync packet queue
+    Connection sync packet multicast - 50 connections per single packet
+    scheduler hash table ???
+secure tcp state transition table
+tcp state: filter rules on the director and/or realserver
+    If the director has only stateless filter rules, 
+    then the director still appears as a stateless router 
+    and director failover will occur without interruption of service.
+
+
+Routing table
+Linux director iptables rules
+REal server: SSL session keys - On realserver failover, these session keys are 
+    lost and the client has to renegotiate the ssl connection. 
+    persistent data e.g. shopping cart on e-commerce sites.
+
+
+
+LDirecotrd can be a resource of heart beat
+
+Director daemon - health checks
+    Negotiate check, with well defined protocol
+    Connect check, if protocol support is not there
+
+ldirectord can happily run on the master and stand-by linux directors at the same time.
+
+Once ldirectord has started the LVS kernel table will be populated.
+
+pod
+    own external LB
+        manual backend
+        auto backend
+        same VM
+            remap
+                policy=local
+                policy=global
+            no remap
+                policy=local
+        other VM
+            remap
+                policy=local
+            no remap
+                policy=local
+
+    other external LB
+    own node
+        own nodePort
+            hairpin
+            manual backend
+            auto backend
+        other nodePort
+            policy=local
+    own clusterIP 
+        hairpin
+    other clusterIP
+    own hostPort
+    other hostPort
+    own VM
+        hostPort
+        other pod
+            port remap
+            no port remap
+    other VM
+        hostPort
+        other pod
+            port remap
+            no port remap
+    internet
+    http://metadata
+
+
+pod -> pod, same VM
+pop -> pod, other VM
+pod -> own VM, own hostPort
+pod -> own VM, other hostPort
+pod -> other VM, other hostPort
+
+pod -> own VM
+pod -> other VM
+pod -> internet
+pod -> http://metadata
+
+VM -> pod, same VM
+VM -> pod, other VM
+VM -> same VM hostPort
+VM -> other VM hostPort
+
+pod -> own clusterIP, hairpin
+pod -> own clusterIP, same VM, other pod, no port remap
+pod -> own clusterIP, same VM, other pod, port remap
+pod -> own clusterIP, other VM, other pod, no port remap
+pod -> own clusterIP, other VM, other pod, port remap
+pod -> other clusterIP, same VM, no port remap
+pod -> other clusterIP, same VM, port remap
+pod -> other clusterIP, other VM, no port remap
+pod -> other clusterIP, other VM, port remap
+pod -> own node, own nodePort, hairpin
+pod -> own node, own nodePort, policy=local
+pod -> own node, own nodePort, same VM
+pod -> own node, own nodePort, other VM
+pod -> own node, other nodePort, policy=local
+pod -> own node, other nodePort, same VM
+pod -> own node, other nodePort, other VM
+pod -> other node, own nodeport, policy=local
+pod -> other node, own nodeport, same VM
+pod -> other node, own nodeport, other VM
+pod -> other node, other nodeport, policy=local
+pod -> other node, other nodeport, same VM
+pod -> other node, other nodeport, other VM
+pod -> own external LB, no remap, policy=local
+pod -> own external LB, no remap, same VM
+pod -> own external LB, no remap, other VM
+pod -> own external LB, remap, policy=local
+pod -> own external LB, remap, same VM
+pod -> own external LB, remap, other VM
+
+VM -> same VM nodePort, policy=local
+VM -> same VM nbodePort, same VM
+VM -> same VM nbodePort, other VM
+VM -> other VM nodePort, policy=local
+VM -> other VM nbodePort, same VM
+VM -> other VM nbodePort, other VM
+
+VM -> external LB
+
+public -> nodeport, policy=local
+public -> nodeport, policy=global
+public -> external LB, no remap, policy=local
+public -> external LB, no remap, policy=global
+public -> external LB, remap, policy=local
+public -> external LB, remap, policy=global
+
+public -> nodeport, manual backend
+public -> external LB, manual backend
+
