@@ -32,6 +32,19 @@ sudo docker exec -w /usr/share/nginx/html nginx-B cat index.html
 
 sudo apt install ipvsadm
 
+sudo vi /etc/default/ipvsadm
+change interface to enp0s9 ## for example
+==
+-A Add Master/director
+- t tcp
+-s scheduler roundrobin
+-m : forwarding :masquarade
+~~
+-a : add real server
+-t tcp
+-r real server ip
+-m masquarade
+~~~
 sudo ipvsadm -A -t 1.2.3.4:80 -s rr
 sudo ipvsadm -a -t 1.2.3.4:80 -r ${hosta_ip} -m
 sudo ipvsadm -a -t 1.2.3.4:80 -r ${hostb_ip} -m
@@ -59,6 +72,15 @@ vagrant@worker-3:/srv/A$ sudo cat /proc/net/ip_vs_stats
 
  Conns/s   Pkts/s   Pkts/s          Bytes/s          Bytes/s
        0        0        0                0                0
+       
+cleanup:
+sudo ipvsadm -d -t 1.2.3.4:http -r 172.17.0.2:http 
+sudo ipvsadm -d -t 1.2.3.4:http -r 172.17.0.3:http 
+sudo ipvsadm -D -t 1.2.3.4:http
+
+sudo docker ps -a | grep nginx-
+sudo docker rm -f 1754fc4c99a3 5065a77a7533
+
 
 ==========================================
 
