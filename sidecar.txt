@@ -66,7 +66,9 @@ spec:
   
  ===
  another example:
- 
+
+https://dev.to/joshduffney/kubernetes-using-configmap-subpaths-to-mount-files-3a1i
+
  # mysql-configmap.yaml
 
 apiVersion: v1
@@ -79,4 +81,115 @@ data:
   mysql_binlog_format.cnf: |
     [mysqld]
     binlog-format=mixed
-    
+ 
+ 
+ # mysql-deployment.yaml
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+spec:
+  ports:
+  - port: 3306
+  selector:
+    app: mysql
+  clusterIP: None
+---
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: mysql
+spec:
+  selector:
+    matchLabels:
+      app: mysql
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - image: mysql:5.6
+        name: mysql
+        env:
+          # Use secret in real usage
+        - name: MYSQL_ROOT_PASSWORD
+          value: password
+        ports:
+        - containerPort: 3306
+          name: mysql
+        volumeMounts:
+        - name: mysql-configmap-volume
+          mountPath: /etc/mysql/conf.d
+      volumes:
+      - name: mysql-configmap-volume
+        configMap:
+          name: mysql-configmap
+#save the above manifests (mysql-configmap.yaml & mysql-deployment.yaml)
+kubectl apply -f .
+
+# Use kubctl exec to list /etc/mysql/conf.d contents
+kubectl exec -it mysql-59fcc88776-g768b ls /etc/mysql/conf.d
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+the above set up - we lose contents of /etc/mysql/conf.d
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Ido have to make a few changes to our deployment manifest to use a subPath. 
+First I'll have to update template.spec.volumeMounts. 
+I need to update the mountPath to include the file name I want it to mount. 
+The mountPath is now /etc/mysql/conf.d/binlog_format.cnf instead of /etc/mysql/conf.d. 
+Next I need to add the subPath property. 
+The value for the subPath must match the path specified in template.volumes section. 
+
+==
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+spec:
+  ports:
+  - port: 3306
+  selector:
+    app: mysql
+  clusterIP: None
+---
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: mysql
+spec:
+  selector:
+    matchLabels:
+      app: mysql
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - image: mysql:5.6
+        name: mysql
+        env:
+          # Use secret in real usage
+        - name: MYSQL_ROOT_PASSWORD
+          value: password
+        ports:
+        - containerPort: 3306
+          name: mysql
+        volumeMounts:
+        - name: mysql-configmap-volume
+          mountPath: /etc/mysql/conf.d/binlog_format.cnf
+          subPath: binlog_format.cnf
+      volumes:
+      - name: mysql-configmap-volume
+        configMap:
+          name: mysql-configmap
+          items:
+          - key: mysql_binlog_format.cnf
+            path: binlog_format.cnf
+====
