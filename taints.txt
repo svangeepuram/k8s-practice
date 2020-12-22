@@ -1,0 +1,1 @@
+https://banzaicloud.com/blog/k8s-taints-tolerations-affinities/         
