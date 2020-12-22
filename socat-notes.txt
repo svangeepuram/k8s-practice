@@ -83,7 +83,21 @@ address spec:
      paramkey=value,option1,option2,option3
     address-type-keyword[:param],option1,option2,option3,
      paramkey=value,option1,option2,option3
+- synonym for stdin
+n  - fd
+/path, /path: GOPEN generic file open is assumed
 
+one channel:
+addr1!!ddr2 dual addr typeaddr open mode:
+    read-only
+    write only
+    read-write
+    
+
+address-type-keyword csn be omitted ???
+address-type-keyword:param1
+address-type-keyword:param1:param2
+address-type-keyword:param1:param2:param3
 
 - 
 TCP4:www.domain.org:80
