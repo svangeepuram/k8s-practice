@@ -23,3 +23,265 @@ https://stackoverflow.com/questions/11634725/socat-virtual-serial-port-not-recog
 
 https://serverfault.com/questions/346481/echo-server-with-netcat-or-socat
 
+
+
+http://technostuff.blogspot.com/2008/10/some-useful-socat-commands.html?m=1
+
+https://manpages.debian.org/testing/socat/socat.1.en.html
+https://copyconstruct.medium.com/socat-29453e9fc8a6
+https://www.redhat.com/sysadmin/getting-started-socat
+https://www.redhat.com/sysadmin/using-wireshark-tshark1
+https://www.redhat.com/sysadmin/kubernetes-cluster-laptop
+https://www.linux.com/news/socat-general-bidirectional-pipe-handler/
+https://www.poftut.com/linux-multipurpose-relay-socat-command-tutorial-with-examples/
+https://www.cyberciti.biz/faq/linux-unix-tcp-port-forwarding/
+http://www.dest-unreach.org/socat/doc/socat-multicast.html
+https://stackoverflow.com/questions/11634725/socat-virtual-serial-port-not-recognized
+https://serverfault.com/questions/346481/echo-server-with-netcat-or-socat
+
+
+init phase
+    parse command line options
+    initilaize logging
+open phase 
+    open first address
+    open second address
+        connection requests
+        authentication dialogs
+transfer phase:
+    watch input streams fd
+    watch output sterams fd vai select() ???
+    is data avaialable on input stream?
+    can data be written on other side?
+    perform read
+    perform newline character converions
+    write data to output stream fd
+    wait for more data in both directions
+Close phase
+    begins when one sends EOF
+
+
+-D : log fd's before transfer phase
+-ly : syslog facility
+-lf <logfile>
+-b8192 blocksize
+-s : sloppy, ignoer errors and continue
+-t1 : tmeout to shutdown write channel
+-T : total inactivity time, use it for UDP - it cant transfer EOF ????
+-u : unidirectional : addr1 : read from ; addr2: write to
+-U : addr2: read from; addr : write to
+-L<lock file> Lock file
+-W<Lock file> Wait until log file disappers
+-4 : ipv4
+-6 ipv6
+
+=====
+
+address spec:
+
+    address-type-keyword,[option1,option2,option3,]
+     paramkey=value,option1,option2,option3
+    address-type-keyword[:param],option1,option2,option3,
+     paramkey=value,option1,option2,option3
+
+
+- 
+TCP4:www.domain.org:80
+READLINE,history=$HOME/.http_history
+TCP4:www.domain.org:www,crnl
+TCP4-LISTEN:www
+TCP4:www.domain.org:www
+TCP4-LISTEN:80,
+    bind=myaddr1,su=nobody,fork,
+    range=10.0.0.0/8,reuseaddr
+
+
+TCP4:www.domain.org:80,
+    bind=myaddr2
+
+TCP4-LISTEN:5555,fork,
+    tcpwrap=script
+
+EXEC:/bin/myscript,
+    chroot=/home/sandbox,
+    su-d=sandbox,pty,stderr
+
+EXEC:"mail.sh target@domain.com",
+    fdin=3,
+    fdout=4
+TCP4:mail.relay.org:25,crnl,
+    bind=alias1.server.org,mss=512
+
+-,escape=0x0f 
+/dev/ttyS0,rawer,crnl
+
+adderesstype:param
+    key=value1
+        -option1
+        -option2
+    key=value2
+    key=value3
+        - option1
+        - option2
+
+UNIX-LISTEN:/tmp/.X11-unix/X1,
+    fork
+
+SOCKS4:host.victim.org:127.0.0.1:6000,
+    socksuser=nobody,
+    sourceport=20
+EXEC:'ssh -l user server',
+    - pty,
+    - setsid,
+    - ctty
+TCP4-LISTEN:3334,reuseaddr,fork
+
+OPEN:/tmp/in.log,
+    - creat,
+    - append
+READLINE,
+    noecho='[Pp]assword:' 
+
+EXEC:'ftp ftp.server.com',
+    - pty,
+    - setsid,
+    - ctty
+
+TCP4-LISTEN:2022,
+    reuseaddr,
+    fork
+
+ROXY:proxy:www.domain.org:22,
+    proxyport=3128,
+    proxyauth=user:pass
+
+SSL:server:4443,
+    cafile=server.crt,
+    cert=client.pem
+
+OPENSSL-LISTEN:4443,
+    reuseaddr,
+    pf=ip4,
+        - fork,
+    cert=server.pem,
+    cafile=client.crt 
+PIPE
+
+addr-type:param1,option1,option2:value,option3
+
+tcp-l:7777,
+    - reuseaddr,
+    fork system:'filan -i 0 -s >&2',
+        nofork
+
+UDP4-DATAGRAM:192.168.1.0:123,
+    sp=123,broadcast,
+    range=192.168.1.0/24
+
+SOCKET-DATAGRAM:2:2:17:x007bxc0a80100x0000000000000000,
+    bind=x007bx00000000x0000000000000000,
+    setsockopt-int=1:6:1,
+    range=x0000xc0a80100x0000000000000000:x0000xffffff00x0000000000000000
+
+for i in `seq 30`
+do
+    echo this is line number $i
+done |sudo tee /tmp/readdata
+
+tail -f
+socat -W /tmp/myread.lock -u /tmp/readdata,seek-end=0,ignoreeof -
+cat
+socat -u /tmp/readdata,seek=0,ignoreeof -
+
+touch /tmp/myread.lock - should exit since lock file exists
+socat -L /tmp/myread.lock -u /tmp/readdata,seek=0,ignoreeof -
+2020/12/22 03:12:25 socat[1954163] E could not obtain lock "/tmp/myread.lock"
+
+run command
+socat -W /tmp/myread.lock -u /tmp/readdata,seek=0,ignoreeof -
+rm /tmp/myread.lock
+ run again n see lock file is created
+
+
+
+socat -W /tmp/myread.lock -u /tmp/readdata,seek=0,ignoreeof -
+
+how to read from a socket ?
+
+socat -U - /tmp/readdata,seek=0,ignoreeof
+
+====
+
+CREATE:<filename>
+EXEC:<command-line>
+    addresses
+FD:<fdnum>
+GOPEN
+IP
+IP4
+ipv6
+OPEN system call
+        OPEN
+
+OPENSSL
+PIPE:<filename>
+PIPE
+proxy
+pty
+READLINE
+SCTP
+SOCKET
+SOCKS4
+SOCKS4A
+stderr
+STDIO
+STDIN
+STDOUT
+SYSTEM:shell command
+    fork
+TCP
+TUN
+UDP
+UNIX domain addresses
+        REG
+        BLK
+abstract
+
+option groups affect  
+    data channel
+    process properties
+APPLICATION
+RANGE option group
+
+These options check if a connecting client should be granted access. 
+They can be applied to listening and receiving network sockets. tcp-wrappers options fall into this group.
+
+
+
+INTERFACE
+
+
+TERMIOS
+OPENSSL
+
+
+SUBRESOURCES:
+    SENDTO
+    DATAGRAM
+    RECVFROM
+    RECV
+    LISTEN
+        fork
+    CONNECT
+        fork
+    CLIENT
+
+
+option groups
+
+FD
+named - FILE SYSTEM ENTRIES
+
+
+
+
