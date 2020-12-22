@@ -1,0 +1,82 @@
+https://gist.github.com/tuannvm/0fc6e94a3759c91b1abe71c149152f77
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  name: test
+spec:
+  replicas: 1
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        service: test
+    spec:
+      containers:
+        image: test
+        name: test
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            memory: 300Mi
+          requests:
+            memory: 100Mi
+        volumeMounts:
+        - name: "config"
+          mountPath: "/<existing folder>/<file1>"
+          subPath: "<file1>"
+        - name: "config"
+          mountPath: "/<existing folder>/<file2>"
+          subPath: "<file2>"
+      restartPolicy: Always
+      volumes:
+        - name: "config"
+          configMap:
+            name: "config"
+      restartPolicy: Always
+status: {}
+
+https://kubernetes.io/blog/2018/04/04/fixing-subpath-volume-vulnerability/
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-pod
+spec:
+  initContainers:
+  - name: prep-symlink
+    image: "busybox"
+    command: ["bin/sh", "-ec", "ln -s / /mnt/data/symlink-door"]
+    volumeMounts:
+    - name: my-volume
+      mountPath: /mnt/data
+  containers:
+  - name: my-container
+    image: "busybox"
+    command: ["/bin/sh", "-ec", "ls /mnt/data; sleep 999999"]
+    volumeMounts:
+    - mountPath: /mnt/data
+      name: my-volume
+      subPath: symlink-door
+  volumes:
+  - name: my-volume
+    emptyDir: {}
+  
+  
+ ===
+ another example:
+ 
+ # mysql-configmap.yaml
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-configmap
+  labels:
+    app: mysql
+data:
+  mysql_binlog_format.cnf: |
+    [mysqld]
+    binlog-format=mixed
+    
