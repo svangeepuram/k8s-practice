@@ -1,4 +1,8 @@
 
+https://www.rubyguides.com/2012/07/socat-cheatsheet/
+
+http://www.dest-unreach.org/socat/doc/socat.html
+
 http://technostuff.blogspot.com/2008/10/some-useful-socat-commands.html?m=1
 
 https://manpages.debian.org/testing/socat/socat.1.en.html
@@ -23,7 +27,14 @@ https://stackoverflow.com/questions/11634725/socat-virtual-serial-port-not-recog
 
 https://serverfault.com/questions/346481/echo-server-with-netcat-or-socat
 
+logitech mouse:
+https://pwr-solaar.github.io/Solaar/installation
+https://ubuntu.com/tutorials/create-a-usb-stick-on-ubuntu#5-confirm-usb-device
 
+ubuntu on stick:
+https://www.fosslinux.com/10212/how-to-install-a-complete-ubuntu-on-a-usb-flash-drive.htm
+https://askubuntu.com/questions/1119700/how-to-fully-install-ubuntu-on-usb-flashdrive
+https://www.fosslinux.com/10212/how-to-install-a-complete-ubuntu-on-a-usb-flash-drive.htm
 
 http://technostuff.blogspot.com/2008/10/some-useful-socat-commands.html?m=1
 
