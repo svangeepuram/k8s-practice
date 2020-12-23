@@ -14,3 +14,72 @@ sudo checkinstall
 
 to remove:
    dpkg -r libmtp
+================
+before:
+
+ec 22 14:06:34 krishi /usr/lib/gdm3/gdm-x-session[3495]: (II) config/udev: Adding input device MosArt Optical Mouse (/dev/input/mouse1)
+Dec 22 14:06:34 krishi /usr/lib/gdm3/gdm-x-session[3495]: (II) No input driver specified, ignoring this device.
+Dec 22 14:06:34 krishi /usr/lib/gdm3/gdm-x-session[3495]: (II) This device may have been added with another device file.
+Dec 22 14:06:34 krishi /usr/lib/gdm3/gdm-x-session[1503]: (II) config/udev: Adding input device MosArt Optical Mouse (/dev/input/mouse1)
+Dec 22 14:06:34 krishi /usr/lib/gdm3/gdm-x-session[1503]: (II) No input driver specified, ignoring this device.
+Dec 22 14:06:34 krishi /usr/lib/gdm3/gdm-x-session[1503]: (II) This device may have been added with another device file.
+Dec 22 14:06:35 krishi /usr/lib/gdm3/gdm-x-session[3495]: (II) config/udev: Adding input device MosArt Optical Mouse (/dev/input/event17)
+Dec 22 14:06:35 krishi /usr/lib/gdm3/gdm-x-session[3495]: (**) MosArt Optical Mouse: Applying InputClass "libinput pointer catchall"
+Dec 22 14:06:35 krishi /usr/lib/gdm3/gdm-x-session[3495]: (II) Using input driver 'libinput' for 'MosArt Optical Mouse'
+Dec 22 14:06:35 krishi /usr/lib/gdm3/gdm-x-session[1503]: (II) config/udev: Adding input device MosArt Optical Mouse (/dev/input/event17)
+Dec 22 14:06:35 krishi /usr/lib/gdm3/gdm-x-session[1503]: (**) MosArt Optical Mouse: Applying InputClass "libinput pointer catchall"
+Dec 22 14:06:35 krishi /usr/lib/gdm3/gdm-x-session[1503]: (II) Using input driver 'libinput' for 'MosArt Optical Mouse'
+Dec 22 14:06:35 krishi                                          mtp-probe[59946]: checking bus 3, device 11: "/sys/devices/pci0000:00/0000:00:1c.3/0000:04:00.0/usb3/3-1"
+Dec 22 14:06:35 krishi                                          mtp-probe[59946]: bus: 3, device: 11 was not an MTP device
+Dec 22 14:06:35 krishi /usr/lib/gdm3/gdm-x-session[3495]: (II) systemd-logind: got fd for /dev/input/event17 13:81 fd 70 paused 0
+Dec 22 14:06:35 krishi /usr/lib/gdm3/gdm-x-session[3495]: (**) MosArt Optical Mouse: always reports core events
+Dec 22 14:06:35 krishi /usr/lib/gdm3/gdm-x-session[3495]: (**) Option "Device" "/dev/input/event17"
+Dec 22 14:06:35 krishi /usr/lib/gdm3/gdm-x-session[3495]: (**) Option "_source" "server/udev"
+Dec 22 14:06:35 krishi /usr/lib/gdm3/gdm-x-session[3495]: (II) event17 - MosArt Optical Mouse: is tagged by udev as: Mouse
+Dec 22 14:06:35 krishi /usr/lib/gdm3/gdm-x-session[1503]: (II) systemd-logind: got fd for /dev/input/event17 13:81 fd 29 paused 1
+Dec 22 14:06:35 krishi /usr/lib/gdm3/gdm-x-session[1503]: (II) systemd-logind: releasing fd for 13:81
+Dec 22 14:06:35 krishi /usr/lib/gdm3/gdm-x-session[3495]: (II) event17 - MosArt Optical Mouse: device is a pointer
+Dec 22 14:06:35 krishi /usr/lib/gdm3/gdm-x-session[3495]: (II) event17 - MosArt Optical Mouse: device removed
+Dec 22 14:06:35 krishi /usr/lib/gdm3/gdm-x-session[3495]: (**) Option "config_info" "udev:/sys/devices/pci0000:00/0000:00:1c.3/0000:04:00.0/usb3/3-1/3-1:1.0/0003:062A:0003.0009/input/input31/event17"
+Dec 22 14:06:35 krishi /usr/lib/gdm3/gdm-x-session[3495]: (II) XINPUT: Adding extended input device "MosArt Optical Mouse" (type: MOUSE, id 14)
+Dec 22 14:06:35 krishi /usr/lib/gdm3/gdm-x-session[3495]: (**) Option "AccelerationScheme" "none"
+Dec 22 14:06:35 krishi /usr/lib/gdm3/gdm-x-session[3495]: (**) MosArt Optical Mouse: (accel) selected scheme none/0
+Dec 22 14:06:35 krishi /usr/lib/gdm3/gdm-x-session[3495]: (**) MosArt Optical Mouse: (accel) acceleration factor: 2.000
+Dec 22 14:06:35 krishi /usr/lib/gdm3/gdm-x-session[3495]: (**) MosArt Optical Mouse: (accel) acceleration threshold: 4
+Dec 22 14:06:35 krishi /usr/lib/gdm3/gdm-x-session[3495]: (II) event17 - MosArt Optical Mouse: is tagged by udev as: Mouse
+Dec 22 14:06:35 krishi /usr/lib/gdm3/gdm-x-session[3495]: (II) event17 - MosArt Optical Mouse: device is a pointer
+======
+
+After install 
+Dec 22 15:54:16 krishi /usr/lib/gdm3/gdm-x-session[3495]: (II) config/udev: Adding input device MosArt Optical Mouse (/dev/input/mouse1)
+Dec 22 15:54:16 krishi /usr/lib/gdm3/gdm-x-session[3495]: (II) No input driver specified, ignoring this device.
+Dec 22 15:54:16 krishi /usr/lib/gdm3/gdm-x-session[3495]: (II) This device may have been added with another device file.
+Dec 22 15:54:16 krishi /usr/lib/gdm3/gdm-x-session[1503]: (II) config/udev: Adding input device MosArt Optical Mouse (/dev/input/mouse1)
+Dec 22 15:54:16 krishi /usr/lib/gdm3/gdm-x-session[1503]: (II) No input driver specified, ignoring this device.
+Dec 22 15:54:16 krishi /usr/lib/gdm3/gdm-x-session[1503]: (II) This device may have been added with another device file.
+Dec 22 15:54:16 krishi /usr/lib/gdm3/gdm-x-session[3495]: (II) config/udev: Adding input device MosArt Optical Mouse (/dev/input/event17)
+Dec 22 15:54:16 krishi /usr/lib/gdm3/gdm-x-session[3495]: (**) MosArt Optical Mouse: Applying InputClass "libinput pointer catchall"
+Dec 22 15:54:16 krishi /usr/lib/gdm3/gdm-x-session[3495]: (II) Using input driver 'libinput' for 'MosArt Optical Mouse'
+Dec 22 15:54:16 krishi /usr/lib/gdm3/gdm-x-session[1503]: (II) config/udev: Adding input device MosArt Optical Mouse (/dev/input/event17)
+Dec 22 15:54:16 krishi /usr/lib/gdm3/gdm-x-session[1503]: (**) MosArt Optical Mouse: Applying InputClass "libinput pointer catchall"
+Dec 22 15:54:16 krishi /usr/lib/gdm3/gdm-x-session[1503]: (II) Using input driver 'libinput' for 'MosArt Optical Mouse'
+Dec 22 15:54:16 krishi                                        mtp-probe[129210]: checking bus 3, device 14: "/sys/devices/pci0000:00/0000:00:1c.3/0000:04:00.0/usb3/3-1"
+Dec 22 15:54:16 krishi                                         mtp-probe[129210]: bus: 3, device: 14 was not an MTP device
+Dec 22 15:54:16 krishi /usr/lib/gdm3/gdm-x-session[3495]: (II) systemd-logind: got fd for /dev/input/event17 13:81 fd 97 paused 0
+Dec 22 15:54:16 krishi /usr/lib/gdm3/gdm-x-session[3495]: (**) MosArt Optical Mouse: always reports core events
+Dec 22 15:54:16 krishi /usr/lib/gdm3/gdm-x-session[3495]: (**) Option "Device" "/dev/input/event17"
+Dec 22 15:54:16 krishi /usr/lib/gdm3/gdm-x-session[3495]: (**) Option "_source" "server/udev"
+Dec 22 15:54:16 krishi /usr/lib/gdm3/gdm-x-session[1503]: (II) systemd-logind: got fd for /dev/input/event17 13:81 fd 29 paused 1
+Dec 22 15:54:16 krishi /usr/lib/gdm3/gdm-x-session[1503]: (II) systemd-logind: releasing fd for 13:81
+Dec 22 15:54:16 krishi /usr/lib/gdm3/gdm-x-session[3495]: (II) event17 - MosArt Optical Mouse: is tagged by udev as: Mouse
+Dec 22 15:54:16 krishi /usr/lib/gdm3/gdm-x-session[3495]: (II) event17 - MosArt Optical Mouse: device is a pointer
+Dec 22 15:54:16 krishi /usr/lib/gdm3/gdm-x-session[3495]: (II) event17 - MosArt Optical Mouse: device removed
+Dec 22 15:54:16 krishi /usr/lib/gdm3/gdm-x-session[3495]: (**) Option "config_info" "udev:/sys/devices/pci0000:00/0000:00:1c.3/0000:04:00.0/usb3/3-1/3-1:1.0/0003:062A:0003.000B/input/input33/event17"
+Dec 22 15:54:16 krishi /usr/lib/gdm3/gdm-x-session[3495]: (II) XINPUT: Adding extended input device "MosArt Optical Mouse" (type: MOUSE, id 14)
+Dec 22 15:54:16 krishi /usr/lib/gdm3/gdm-x-session[3495]: (**) Option "AccelerationScheme" "none"
+Dec 22 15:54:16 krishi /usr/lib/gdm3/gdm-x-session[3495]: (**) MosArt Optical Mouse: (accel) selected scheme none/0
+Dec 22 15:54:16 krishi /usr/lib/gdm3/gdm-x-session[3495]: (**) MosArt Optical Mouse: (accel) acceleration factor: 2.000
+Dec 22 15:54:16 krishi /usr/lib/gdm3/gdm-x-session[3495]: (**) MosArt Optical Mouse: (accel) acceleration threshold: 4
+Dec 22 15:54:16 krishi /usr/lib/gdm3/gdm-x-session[3495]: (II) event17 - MosArt Optical Mouse: is tagged by udev as: Mouse
+Dec 22 15:54:16 krishi /usr/lib/gdm3/gdm-x-session[3495]: (II) event17 - MosArt Optical Mouse: device is a pointer
+
