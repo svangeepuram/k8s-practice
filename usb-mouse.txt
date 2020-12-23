@@ -1,0 +1,16 @@
+sudo apt-get install build-essential checkinstall wget
+sudo apt install libusb-1.0-0-dev
+
+wget https://sourceforge.net/projects/libmtp/files/libmtp/1.1.18/libmtp-1.1.18.tar.gz
+
+tar zxf libmtp-1.1.18.tar.gz
+cd libmtp-1.1.18
+
+./configure
+make
+sudo checkinstall
+
+
+
+to remove:
+   dpkg -r libmtp
