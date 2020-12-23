@@ -1,3 +1,10 @@
+
+try this sometime:
+
+https://www.linux-magazine.com/Issues/2009/104/MTP-in-Linux
+
+
+
 sudo apt-get install build-essential checkinstall wget
 sudo apt install libusb-1.0-0-dev
 
@@ -14,7 +21,86 @@ sudo checkinstall
 
 to remove:
    dpkg -r libmtp
+   
+   https://wiki.ubuntu.com/DebuggingMouseDetection
+   https://superuser.com/questions/1206664/disable-mtp-udev-rules-for-specific-device-so-it-can-be-mount-as-a-usb-mass-stor
 ================
+root@krishi:~# lsmod | grep usb
+usbhid                 57344  1 hid_logitech_dj
+hid                   131072  4 usbhid,hid_generic,hid_logitech_dj,hid_logitech_hidpp
+btusb                  57344  0
+btrtl                  24576  1 btusb
+btbcm                  16384  1 btusb
+btintel                24576  1 btusb
+bluetooth             548864  27 btrtl,btintel,btbcm,bnep,btusb,rfcomm
+usb_storage            77824  1 uas
+====
+chary@krishi:~/libmtp/libmtp-1.1.18$ lsmod | grep usb
+usbhid                 57344  1 hid_logitech_dj
+hid                   131072  4 usbhid,hid_generic,hid_logitech_dj,hid_logitech_hidpp
+btusb                  57344  0
+btrtl                  24576  1 btusb
+btbcm                  16384  1 btusb
+btintel                24576  1 btusb
+bluetooth             548864  27 btrtl,btintel,btbcm,bnep,btusb,rfcomm
+usb_storage            77824  1 uas
+
+=====
+lsusb
+Bus 002 Device 003: ID 8086:0189 Intel Corp. 
+Bus 002 Device 002: ID 8087:0024 Intel Corp. Integrated Rate Matching Hub
+Bus 002 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 004 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+Bus 003 Device 002: ID 0781:5575 SanDisk Corp. Cruzer Glide
+Bus 003 Device 014: ID 062a:0003 MosArt Semiconductor Corp. Optical Mouse
+Bus 003 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 001 Device 002: ID 8087:0024 Intel Corp. Integrated Rate Matching Hub
+Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+
+====
+oot@krishi:~# lsblk
+NAME   MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT
+loop0    7:0    0  62.1M  1 loop /snap/gtk-common-themes/1506
+loop1    7:1    0  31.1M  1 loop /snap/snapd/10238
+loop2    7:2    0  31.1M  1 loop /snap/snapd/10492
+loop3    7:3    0    51M  1 loop /snap/snap-store/498
+loop4    7:4    0  64.8M  1 loop /snap/gtk-common-themes/1514
+loop5    7:5    0  55.4M  1 loop /snap/core18/1932
+loop6    7:6    0 255.6M  1 loop /snap/gnome-3-34-1804/36
+loop7    7:7    0  55.4M  1 loop /snap/core18/1944
+loop8    7:8    0 217.9M  1 loop /snap/gnome-3-34-1804/60
+loop9    7:9    0 162.9M  1 loop /snap/gnome-3-28-1804/145
+loop10   7:10   0    51M  1 loop /snap/snap-store/518
+sda      8:0    0 596.2G  0 disk 
+├─sda1   8:1    0   512M  0 part /boot/efi
+├─sda2   8:2    0     1K  0 part 
+└─sda5   8:5    0 595.7G  0 part /
+sdb      8:16   1  58.6G  0 disk 
+├─sdb1   8:17   1     4G  0 part 
+├─sdb2   8:18   1     4G  0 part 
+├─sdb3   8:19   1  15.6G  0 part 
+└─sdb4   8:20   1    35G  0 part 
+sr0     11:0    1   6.8G  0 rom  /media/chary/YUVAO_KE_LIYE_SCN
+root@krishi:~# lsusb
+Bus 002 Device 003: ID 8086:0189 Intel Corp. 
+Bus 002 Device 002: ID 8087:0024 Intel Corp. Integrated Rate Matching Hub
+Bus 002 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 004 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+Bus 003 Device 002: ID 0781:5575 SanDisk Corp. Cruzer Glide
+Bus 003 Device 012: ID 062a:0003 MosArt Semiconductor Corp. Optical Mouse
+Bus 003 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 001 Device 002: ID 8087:0024 Intel Corp. Integrated Rate Matching Hub
+Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+root@krishi:~# ls /lib/udev/rules.d/69-libmtp.rules
+/lib/udev/rules.d/69-libmtp.rules
+root@krishi:~# cat /lib/udev/rules.d/69-libmtp.rules
+# UDEV-style hotplug map for libmtp
+# Put this file in /etc/udev/rules.d
+=====
+
+
+=================
+
 before:
 
 ec 22 14:06:34 krishi /usr/lib/gdm3/gdm-x-session[3495]: (II) config/udev: Adding input device MosArt Optical Mouse (/dev/input/mouse1)
