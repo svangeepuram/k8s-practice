@@ -1,37 +1,53 @@
 
 
-ubuntu on stick:
-https://www.fosslinux.com/10212/how-to-install-a-complete-ubuntu-on-a-usb-flash-drive.htm
-https://askubuntu.com/questions/1119700/how-to-fully-install-ubuntu-on-usb-flashdrive
-https://www.fosslinux.com/10212/how-to-install-a-complete-ubuntu-on-a-usb-flash-drive.htm
 
-sudo mount /dev/sdb7 /mnt
-mkdir -p /mnt/boot/efi
-mount /dev/sda5 /mnt/boot/efi
+kubectl delete pod socat-web --force --grace-period=0
+kubectl delete svc socat-web
+
+export SOCAT_PORT=10000
+
+====================
+apiVersion: v1
+kind: Pod
+metadata:
+  name: socat-web
+  labels:
+    purpose: dynamic-port
+spec:
+  containers:
+  - name: socat-web
+    image: alpine/socat
+    ports:
+    - name: web
+      protocol: TCP
+      containerPort: 20000
+    command: [ "/bin/sh", "-c", "socat  -v -d -d TCP-LISTEN:20000,crlf,reuseaddr,fork SYSTEM:\"echo HTTP/1.1 200 OK; echo Content-Type\\: text/plain; echo ;echo \\\"Hola... Bienvenidos to the world of sockets...\\\";echo \\\"Server: \\$SOCAT_SOCKADDR:\\$SOCAT_SOCKPORT\\\";echo \\\"Server: \\$SOCAT_PEERADDR:\\$SOCAT_PEERPORT\\\";\"" ]
+  restartPolicy: OnFailure
+
+======================
+
+yamllint socat-web.yaml
+kubectl apply --record -f socat-web.yaml --dry-run=server
+kubectl apply --record -f socat-web.yaml
+kubectl apply --record -f socat-web.yaml --validate=false
+
+k logs socat-web
+
+kubectl expose pod socat-web --port=80 --target-port=web
 
 
+k get svc; k get ep
 
-sudo mount --bind /dev /mnt/dev &&
-sudo mount --bind /dev/pts /mnt/dev/pts &&
-sudo mount --bind /proc /mnt/proc &&
-sudo mount --bind /sys /mnt/sys
+k describe pod socat-web
 
-sudo chroot /mnt
+for i in {1..10}
+do
+  echo counter ${i}
+  curl --dns-servers 10.96.0.10 socat-web.default.svc.cluster.local
+done
 
-grub-install --target=x86_64-efi --efi-directory=/boot/efi /dev/sdb
 
-grub-install --target=x86_64-efi /dev/sdb
-
-grub-install --recheck /dev/sdb
-
-exit
-sudo umount /mnt/sys
-sudo umount /mnt/proc
-sudo umount /mnt/dev
-sudo umount /mnt/boot/efi
-sudo umount /mnt/dev/pts
-sudo umount /mnt
-=========
+===========
 
 https://www.rubyguides.com/2012/07/socat-cheatsheet/
 
