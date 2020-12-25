@@ -1,0 +1,540 @@
+sudo apt install nfs-kernel-server nfs-common portmap -y
+   63  sudo systemctl start nfs-server
+   64  sudo systemctl status nfs-server
+   65  mkdir -p /srv/nfs/mydata 
+   66  sudo mkdir -p /srv/nfs/mydata 
+   67  sudo chmod -R 777 /srv/nfs/ 
+   68  sudo vi /etc/exports 
+   69  sudo exportfs -rv
+   70  sudo  showmount -e
+
+
+
+sudo mount -t nfs 192.168.5.21:/srv/nfs/mydata /mnt
+
+sudo mount -t nfs 192.168.5.22:/srv/nfs/mydata /mnt
+
+
+mount | grep mydata
+192.168.5.21:/srv/nfs/mydata on /mnt type nfs4 
+    (rw,relatime,vers=4.2,
+    rsize=524288,
+    wsize=524288,
+    namlen=255,hard,
+    proto=tcp,timeo=600,
+    retrans=2,
+    sec=sys,
+    clientaddr=192.168.5.21,
+    local_lock=none,
+    addr=192.168.5.21)
+
+cat <<EOF > nfs-pv.yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: nfs-pv
+  labels:
+    name: mynfs # name can be anything
+spec:
+  storageClassName: manual # same storage class as pvc
+  capacity:
+    storage: 200Mi
+  accessModes:
+    - ReadWriteMany
+  nfs:
+    server: 192.168.5.21
+    path: "/srv/nfs/mydata2"
+EOF
+
+kubectl apply -f nfs-pv.yaml
+
+
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nfs-pvc
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteMany #  must be the same as PersistentVolume
+  resources:
+    requests:
+      storage: 50Mi
+
+curl -O https://raw.githubusercontent.com/Ccaplat/Kubernetes_Volumes_NFS/master/nfs_pvc.yaml
+
+kubectl apply -f ns-pvc.yaml
+curl -O https://raw.githubusercontent.com/Ccaplat/Kubernetes_Volumes_NFS/master/nfs_pod.yaml 
+
+nfs_pod.yaml 
+
+
+kubectl delete pv mypv --grace-period=0 --force
+And then deleting the finalizer using:
+
+kubectl patch pv nfs -p '{"metadata": {"finalizers": null}}'
+
+vi nfs-pvc.yaml
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nfs-pvc
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteMany #  must be the same as PersistentVolume
+  resources:
+    requests:
+      storage: 50Mi
+====
+
+What happens to a persistent volume when released from its claim. Valid
+     options are Retain (default for manually created PersistentVolumes), Delete
+     (default for dynamically provisioned PersistentVolumes), and Recycle
+     (deprecated). Recycle must be supported by the volume plugin underlying
+     this PersistentVolume. More info:
+
+==
+dynamic provisioning:
+
+sudo mkdir -p /srv/nfs/mydata2
+sudo chown 777 /srv/nfs/mydata2
+
+cat <<EOF | sudo tee -a  /etc/exports
+/srv/nfs/mydata2  *(rw,sync,no_subtree_check,no_root_squash,insecure)
+EOF
+
+sudo exportfs -rv
+sudo showmount -e 
+
+
+sudo mount -t nfs 192.168.5.21:/srv/nfs/mydata2 /mnt
+
+sudo mount -t nfs 192.168.5.22:/srv/nfs/mydata2 /mnt
+=======
+cat <<EOF | sudo tee nfs-rbac.yaml
+kind: ServiceAccount
+apiVersion: v1
+metadata:
+  name: nfs-pod-provisioner-sa
+---
+kind: ClusterRole # Role of kubernetes
+apiVersion: rbac.authorization.k8s.io/v1 # auth API
+metadata:
+  name: nfs-provisioner-clusterRole
+rules:
+  - apiGroups: [""] # rules on persistentvolumes
+    resources: ["persistentvolumes"]
+    verbs: ["get", "list", "watch", "create", "delete"]
+  - apiGroups: [""]
+    resources: ["persistentvolumeclaims"]
+    verbs: ["get", "list", "watch", "update"]
+  - apiGroups: ["storage.k8s.io"]
+    resources: ["storageclasses"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["events"]
+    verbs: ["create", "update", "patch"]
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: nfs-provisioner-rolebinding
+subjects:
+  - kind: ServiceAccount
+    name: nfs-pod-provisioner-sa # defined on top of file
+    namespace: default
+roleRef: # binding cluster role to service account
+  kind: ClusterRole
+  name: nfs-provisioner-clusterRole # name defined in clusterRole
+  apiGroup: rbac.authorization.k8s.io
+---
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: nfs-pod-provisioner-otherRoles
+rules:
+  - apiGroups: [""]
+    resources: ["endpoints"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: nfs-pod-provisioner-otherRoles
+subjects:
+  - kind: ServiceAccount
+    name: nfs-pod-provisioner-sa # same as top of the file
+    # replace with namespace where provisioner is deployed
+    namespace: default
+roleRef:
+  kind: Role
+  name: nfs-pod-provisioner-otherRoles
+  apiGroup: rbac.authorization.k8s.io
+EOF
+
+k apply -f nfs-rbac.yaml
+
+
+cat <<EOF | sudo tee nfs-storage-class.yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: nfs-storageclass
+provisioner: nfs-test # name can be anything
+parameters:
+  archiveOnDelete: "false"
+allowVolumeExpansion: true
+EOF
+
+
+k apply -f nfs-storage-class.yaml
+
+cat <<EOF | sudo tee nfs-pv.yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: nfs-pv
+  labels:
+    name: mynfs # name can be anything
+spec:
+  storageClassName: nfs-storageclass
+  capacity:
+    storage: 200Mi
+  accessModes:
+    - ReadWriteMany
+  nfs:
+    server: 192.168.5.21
+    path: "/srv/nfs/mydata2"
+  persistentVolumeReclaimPolicy: Delete
+EOF
+
+k apply -f nfs-pv.yaml
+
+vi nfs-pvc.yaml
+cat <<EOF | sudo tee nfs-pvc.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nfs-pvc
+spec:
+  storageClassName: nfs-storageclass
+  accessModes:
+    - ReadWriteMany #  must be the same as PersistentVolume
+  resources:
+    requests:
+      storage: 50Mi
+EOF
+
+k apply -f nfs-pvc.yaml
+
+
+ubectl get pvc,pv
+
+
+
+cat <<EOF | sudo tee nfs_pod.yaml 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: nginx
+  name: nfs-nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      volumes:
+      - name: nfs-test
+        persistentVolumeClaim:
+          claimName: nfs-pvc
+      containers:
+      - image: nginx
+        name: nginx
+        volumeMounts:
+        - name: nfs-test
+          mountPath: /usr/share/nginx/html # mount inside of contianer
+EOF
+
+k apply -f nfs_pod.yaml 
+
+mypod=$(kubectl get po --no-headers| grep nfs-nginx | awk '{print $1}')
+echo $mypod
+
+kubectl describe po $mypod
+
+kubectl exec -it $mypod -- /bin/bash -c "echo '<h1> this should hopefully work</h1>' | sudo tee /usr/share/nginx/html/test.html"
+
+
+echo '<h1> this should hopefully work</h1>' | tee /usr/share/nginx/html/test.html
+
+kubectl exec -it $mypod -- /bin/bash -c "cat /usr/share/nginx/html/test.html"
+
+ls /srv/nfs/mydata2
+
+
+kubectl expose deploy nfs-nginx --port 80 --type NodePort
+
+nodeport=$(kubectl get svc --no-headers | grep nfs-nginx | awk '{print $5}' | awk 'BEGIN{FS="/"}{ print $1 }' | awk 'BEGIN{FS=":"}{ print $2 }')
+echo $nodeport
+
+kubectl exec -it $mypod -- /bin/sh
+
+curl -L 192.168.5.11:${nodeport}/test.html -k
+kubectl exec -it $mypod -- /bin/sh -c "curl nfs-nginx/test.html"
+
+
+
+
+
+wget -qO- --spider -T 3 http://192.168.5.21:$nodeport
+
+wget -qO- http://localhost:$nodeport
+
+
+expand manually:
+
+Retain
+
+kubectl patch pv nfs-pv -p '{"spec": {"persistentVolumeReclaimPolicy": "Retain"}}'
+
+kuebctl delete Deployment
+
+kubectl delete pvc nfs-pvc
+
+kubectl patch pv nfs-pv -p '{ "op": "remove", "path": "/spec/claimRef"}'
+
+pvc : point to PV
+volumeName: nfs-pv
+
+
+restore policy :
+kubectl patch pv nfs-pv -p '{"spec": {"persistentVolumeReclaimPolicy": "Retain"}}'
+
+
+sample:
+delete label:
+curl -k -v -XPATCH -H "Accept: application/json, /" \
+ -H "Content-Type: application/strategic-merge-patch+json" 
+ 10.10.10.10:443/api/v1/namespaces/default/pds/all-flow-946y0 \
+ --data '{"metadata":{"labels":{"$patch": "delete", "app":"all-flow"}}}'
+
+must read:
+
+https://www.disasterproject.com/kubernetes-kubectl-patching/
+
+
+    Mark the PersistentVolume(PV) that is bound to the PersistentVolumeClaim(PVC) with Retain reclaim policy.
+    Delete the PVC. Since PV has Retain reclaim policy - we will not lose any data when we recreate the PVC.
+    Delete the claimRef entry from PV specs, so as new PVC can bind to it. This should make the PV Available.
+    Re-create the PVC with smaller size than PV and set volumeName field of the PVC to the name of the PV. This should bind new PVC to existing PV.
+    Don't forget to restore the reclaim policy of the PV.
+
+Types of Persistent Volume
+
+
+====
+resolve warnings:
+
+Warning: resource serviceaccounts/nfs-pod-provisioner-sa is missing the kubectl.kubernetes.io/last-applied-configuration annotation which is required by kubectl apply. kubectl apply should only be used on resources created declaratively by either kubectl create --save-config or kubectl apply. The missing annotation will be patched automatically.
+serviceaccount/nfs-pod-provisioner-sa configured
+Warning: resource clusterroles/nfs-provisioner-clusterRole is missing the kubectl.kubernetes.io/last-applied-configuration annotation which is required by kubectl apply. kubectl apply should only be used on resources created declaratively by either kubectl create --save-config or kubectl apply. The missing annotation will be patched automatically.
+clusterrole.rbac.authorization.k8s.io/nfs-provisioner-clusterRole configured
+Warning: resource clusterrolebindings/nfs-provisioner-rolebinding is missing the kubectl.kubernetes.io/last-applied-configuration annotation which is required by kubectl apply. kubectl apply should only be used on resources created declaratively by either kubectl create --save-config or kubectl apply. The missing annotation will be patched automatically.
+clusterrolebinding.rbac.authorization.k8s.io/nfs-provisioner-rolebinding configured
+Warning: resource roles/nfs-pod-provisioner-otherRoles is missing the kubectl.kubernetes.io/last-applied-configuration annotation which is required by kubectl apply. kubectl apply should only be used on resources created declaratively by either kubectl create --save-config or kubectl apply. The missing annotation will be patched automatically.
+role.rbac.authorization.k8s.io/nfs-pod-provisioner-otherRoles configured
+Warning: resource rolebindings/nfs-pod-provisioner-otherRoles is missing the kubectl.kubernetes.io/last-applied-configuration annotation which is required by kubectl apply. kubectl apply should only be used on resources created declaratively by either kubectl create --save-config or kubectl apply. The missing annotation will be patched automatically.
+rolebinding.rbac.authorization.k8s.io/nfs-pod-provisioner-otherRoles configured
+
+
+=====
+vagrant@master-1:~$ k get pv nfs-pv -oyaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","kind":"PersistentVolume","metadata":{"annotations":{},"labels":{"name":"mynfs"},"name":"nfs-pv"},"spec":{"accessModes":["ReadWriteMany"],"capacity":{"storage":"200Mi"},"nfs":{"path":"/srv/nfs/mydata2","server":"192.168.5.21"},"persistentVolumeReclaimPolicy":"Delete","storageClassName":"nfs-storageclass"}}
+  creationTimestamp: "2020-12-24T04:00:21Z"
+  finalizers:
+  - kubernetes.io/pv-protection
+  labels:
+    name: mynfs
+  managedFields:
+  - apiVersion: v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:status:
+        f:phase: {}
+    manager: kube-controller-manager
+    operation: Update
+    time: "2020-12-24T04:00:21Z"
+  - apiVersion: v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:metadata:
+        f:annotations:
+          .: {}
+          f:kubectl.kubernetes.io/last-applied-configuration: {}
+        f:labels:
+          .: {}
+          f:name: {}
+      f:spec:
+        f:accessModes: {}
+        f:capacity:
+          .: {}
+          f:storage: {}
+        f:nfs:
+          .: {}
+          f:path: {}
+          f:server: {}
+        f:persistentVolumeReclaimPolicy: {}
+        f:storageClassName: {}
+        f:volumeMode: {}
+    manager: kubectl-client-side-apply
+    operation: Update
+    time: "2020-12-24T04:00:21Z"
+  name: nfs-pv
+  resourceVersion: "1363393"
+  uid: f761ba15-7fa6-4ff9-81a9-81d4b7ed26ff
+spec:
+  accessModes:
+  - ReadWriteMany
+  capacity:
+    storage: 200Mi
+  nfs:
+    path: /srv/nfs/mydata2
+    server: 192.168.5.21
+  persistentVolumeReclaimPolicy: Delete
+  storageClassName: nfs-storageclass
+  volumeMode: Filesystem
+status:
+  phase: Available
+
+=====
+
+vagrant@master-1:~$ k get pvc nfs-pvc -oyaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","kind":"PersistentVolumeClaim","metadata":{"annotations":{},"name":"nfs-pvc","namespace":"default"},"spec":{"accessModes":["ReadWriteMany"],"resources":{"requests":{"storage":"50Mi"}},"storageClassName":"nfs-storageclass"}}
+    pv.kubernetes.io/bind-completed: "yes"
+    pv.kubernetes.io/bound-by-controller: "yes"
+  creationTimestamp: "2020-12-24T04:02:11Z"
+  finalizers:
+  - kubernetes.io/pvc-protection
+  managedFields:
+  - apiVersion: v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:metadata:
+        f:annotations:
+          f:pv.kubernetes.io/bind-completed: {}
+          f:pv.kubernetes.io/bound-by-controller: {}
+      f:spec:
+        f:volumeName: {}
+      f:status:
+        f:accessModes: {}
+        f:capacity:
+          .: {}
+          f:storage: {}
+        f:phase: {}
+    manager: kube-controller-manager
+    operation: Update
+    time: "2020-12-24T04:02:11Z"
+  - apiVersion: v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:metadata:
+        f:annotations:
+          .: {}
+          f:kubectl.kubernetes.io/last-applied-configuration: {}
+      f:spec:
+        f:accessModes: {}
+        f:resources:
+          f:requests:
+            .: {}
+            f:storage: {}
+        f:storageClassName: {}
+        f:volumeMode: {}
+    manager: kubectl-client-side-apply
+    operation: Update
+    time: "2020-12-24T04:02:11Z"
+  name: nfs-pvc
+  namespace: default
+  resourceVersion: "1363559"
+  uid: 44b33817-cc63-43b4-821b-691a4604139e
+spec:
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 50Mi
+  storageClassName: nfs-storageclass
+  volumeMode: Filesystem
+  volumeName: nfs-pv
+status:
+  accessModes:
+  - ReadWriteMany
+  capacity:
+    storage: 200Mi
+  phase: Bound
+===
+vagrant@master-1:~$ k get pv
+NAME     CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM             STORAGECLASS       REASON   AGE
+nfs-pv   200Mi      RWX            Delete           Bound    default/nfs-pvc   nfs-storageclass            3m13s
+vagrant@master-1:~$ k get pvc
+NAME      STATUS   VOLUME   CAPACITY   ACCESS MODES   STORAGECLASS       AGE
+nfs-pvc   Bound    nfs-pv   200Mi      RWX            nfs-storageclass   86s
+
+
+
+
+
+
+
+
+
+
+
+====
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: nfs-busybox
+spec:
+  replicas: 2
+  selector:
+    name: nfs-busybox
+  template:
+    metadata:
+      labels:
+        name: nfs-busybox
+    spec:
+      containers:
+      - image: busybox
+        command:
+          - sh
+          - -c
+          - 'while true; do date > /mnt/index.html; hostname >> /mnt/index.html; sleep $(($RANDOM % 5 + 5)); done'
+        imagePullPolicy: IfNotPresent
+        name: busybox
+        volumeMounts:
+          # name must match the volume name below
+          - name: nfs
+            mountPath: "/mnt"
+      volumes:
+      - name: nfs
+        persistentVolumeClaim:
+          claimName: nfs
