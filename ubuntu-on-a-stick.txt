@@ -1,0 +1,33 @@
+
+ubuntu on stick:
+https://www.fosslinux.com/10212/how-to-install-a-complete-ubuntu-on-a-usb-flash-drive.htm
+https://askubuntu.com/questions/1119700/how-to-fully-install-ubuntu-on-usb-flashdrive
+https://www.fosslinux.com/10212/how-to-install-a-complete-ubuntu-on-a-usb-flash-drive.htm
+
+sudo mount /dev/sdb7 /mnt
+mkdir -p /mnt/boot/efi
+mount /dev/sda5 /mnt/boot/efi
+
+
+
+sudo mount --bind /dev /mnt/dev &&
+sudo mount --bind /dev/pts /mnt/dev/pts &&
+sudo mount --bind /proc /mnt/proc &&
+sudo mount --bind /sys /mnt/sys
+
+sudo chroot /mnt
+
+grub-install --target=x86_64-efi --efi-directory=/boot/efi /dev/sdb
+
+grub-install --target=x86_64-efi /dev/sdb
+
+grub-install --recheck /dev/sdb
+
+exit
+sudo umount /mnt/sys
+sudo umount /mnt/proc
+sudo umount /mnt/dev
+sudo umount /mnt/boot/efi
+sudo umount /mnt/dev/pts
+sudo umount /mnt
+=========
