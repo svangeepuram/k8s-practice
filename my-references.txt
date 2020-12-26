@@ -1,3 +1,6 @@
+https://www.tecmint.com/use-linux-awk-command-to-filter-text-string-in-files/
+
+
 Deployment| pod spec templatization :
 https://stackoverflow.com/questions/61946064/kubernetes-deployment-pass-arguments
 ==
