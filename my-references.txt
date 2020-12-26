@@ -1,4 +1,54 @@
-@http://www.ultramonkey.org/papers/lvs_tutorial/html/
+Deployment| pod spec templatization :
+https://stackoverflow.com/questions/61946064/kubernetes-deployment-pass-arguments
+==
+...
+args:
+- --userid=$USER
+- --role=$ROLE
+...
+cat resource.yaml | USER=testuser ROLE=manager envsubst | kubectl apply -f -
+obviously any other string replacement method would do (sed, awk, etc.)
+==
+This should be added in your deployment.yml
+
+spec: 
+  containers: 
+    - name: testimage 
+      image: <my image name>:<tag> 
+      args: ["--userid","=","testuser","--role","=","manager"]
+ ========
+
+
+https://github.com/kubernetes/kubernetes/issues/32240
+
+Escape characters in json / pods:
+https://stackoverflow.com/questions/37427498/how-to-escape-double-and-single-quotes-in-yaml-within-the-same-string
+https://github.com/kubernetes/kubernetes/issues/32240
+
+annotations:
+    pod.alpha.kubernetes.io/init-containers: '[
+      {
+         "name": "initialize-tgtd",
+         "image": "toolbox:3.0.0",
+         "command": [
+             "sh",
+             "-ce",
+             "cp -a /srv/configmap/..data/* /srv/pod-main-config/;
+              sed ''s/\\( portal=\\i)[^ ].*/\\1 0.0.0.0:3260\"/'' /srv/configmap/..data/config.json > /srv/pod-main-config/config.json; "],
+         "volumeMounts": [
+            {
+               "name": "tgtd-configmap",
+               "mountPath": "/srv/configmap"
+            },
+            {
+               "name": "pod-main-config",
+               "mountPath": "/srv/pod-main-config"
+            }
+         ]
+      }
+    ]'
+    
+ @http://www.ultramonkey.org/papers/lvs_tutorial/html/
 IPVS tutorial
 
 ipvs installation and testing:
