@@ -1,0 +1,536 @@
+sudo apt remove nfs-kernel-server nfs-common portmap -y
+
+curl -skSL https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/master/deploy/install-driver.sh
+
+curl --trace - https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/master/deploy/install-driver.sh
+
+curl --trace-ascii - https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/master/deploy/install-driver.sh
+
+curl --trace-ascii curl.trc https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/master/deploy/install-driver.sh
+
+curl --trace-ascii -  https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/master/deploy/install-driver.sh
+
+curl --trace-ascii % --stderr curl.err https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/master/deploy/install-driver.sh
+
+curl --progress-meter  https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/master/deploy/install-driver.sh
+
+curl --no-progress-meter https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/master/deploy/install-driver.sh
+
+curl --include https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/master/deploy/install-driver.sh
+
+curl --include --no-progress-meter https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/master/deploy/install-driver.sh
+
+curl --silent https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/master/deploy/install-driver.sh
+
+curl --silent --show-error https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/master/deploy/install-driver.sh
+
+
+-K, --config <file> : Specify a text file to read curl arguments from
+
+--connect-to <HOST1:PORT1:HOST2:PORT2>
+
+              For a request to the given HOST1:PORT1 pair, connect to
+              HOST2:PORT2 instead.  This option is suitable to direct
+              requests at a specific server
+-C, --continue-at <offset>
+              Continue/Resume a previous file transfer at the given
+              offset. ???
+
+-c, --cookie-jar <filename>
+              (HTTP) Specify to which file you want curl to write all
+              cookies after a completed operation. Curl writes all
+              cookies from its in-memory cookie storage to the given
+              file at the end of operations. If no cookies are known, no
+              data will be written.
+              
+--random-file <file>
+              Specify the path name to file containing what will be
+              considered as random data. The data may be used to seed
+              the random engine for SSL connections. 
+--egd-file <file>
+              (TLS) Specify the path name to the Entropy Gathering
+              Daemon socket. The socket is used to seed the random
+              engine for SSL connections.
+
+--engine <name> :(TLS) Select the OpenSSL crypto engine to use for cipher operations. 
+
+--compressed-ssh
+--compressed : http
+
+curl --engine list
+Build-time engines:
+  rdrand
+  dynamic
+--ciphers <list of ciphers>
+              (TLS) Specifies which ciphers to use in the connection.
+            
+--cert-status
+              (TLS) Tells curl to verify the status of the server
+              certificate by using the Certificate Status Request (aka.
+              OCSP stapling) TLS extension.
+    Backends:
+        OpenSSL
+        GnuTLSNSS backends.
+
+--cert <certificate[:password]> CA cert bundle - pkcs#12 format
+        coontains : Key and cert both
+
+
+--cert-type <type> PEM, DER, ENG and P12 are recognized types. Default PEM is assumed.
+--cacert
+--capath
+--key-type <type> provate key file type. DER, PEM, and ENG. Default : ENG
+--key <key> 
+    order:
+        ~/.ssh/id_rsa'
+        '~/.ssh/id_dsa'
+        './id_rsa'
+        './id_dsa'.
+If curl is built against OpenSSL library, and the engine
+              pkcs11 is available, then a PKCS#11 URI (RFC 7512) can be
+              used to specify a private key located in a PKCS#11 device.
+              A string beginning with "pkcs11:" will be interpreted as a
+              PKCS#11 URI. If a PKCS#11 URI is provided then the
+              --engine option will be set as "pkcs11" if none was
+              provided and the --key-type option will be set as "ENG" if
+              none was provided.
+
+--proxy-insecure
+
+
+curl --verbose https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/master/deploy/install-driver.sh
+
+curl --verbose https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/master/deploy/install-driver.sh
+
+
+==
+-c        If the -c option is present, then commands are read from the first non-option argument command_string.  If there are arguments after the command_string, the
+                 first  argument  is  assigned to $0 and any remaining arguments are assigned to the positional parameters.  The assignment to $0 sets the name of the shell,
+                 which is used in warning and error messages.
+       -i        If the -i option is present, the shell is interactive.
+       -l        Make bash act as if it had been invoked as a login shell (see INVOCATION below).
+       -r        If the -r option is present, the shell becomes restricted (see RESTRICTED SHELL below).
+       -s        If the -s option is present, or if no arguments remain after option processing, then commands are read from the standard input.  This option allows the  po‐
+                 sitional parameters to be set when invoking an interactive shell or when reading input through a pipe.
+       -v        Print shell input lines as they are read.
+       -x        Print commands and their arguments as they are executed.
+       -D        A  list  of  all double-quoted strings preceded by $ is printed on the standard output.  These are the strings that are subject to language translation when
+                 the current locale is not C or POSIX.  This implies the -n option; no commands will be executed.
+       [-+]O [shopt_option]
+                 shopt_option is one of the shell options accepted by the shopt builtin (see SHELL BUILTIN COMMANDS below).  If shopt_option is present, -O sets the value of
+                 that option; +O unsets it.  If shopt_option is not supplied, the names and values of the shell options accepted by shopt are printed on the standard output.
+                 If the invocation option is +O, the output is displayed in a format that may be reused as input.
+       --        A -- signals the end of options and disables further option processing.  Any arguments after the -- are treated as filenames and arguments.  An argument  of
+                 - is equivalent to --.
+===
+
+curl:
+
+--trace - : stdout
+--trace % : staderr
+
+
+--trace <file> : hex and ascii dump
+    --trace - : stdout
+    --trace % : staderr
+--trace-ascii <file> : only ascii dump
+    --trace-ascii - : stdout
+        content
+        additional info
+        request headers
+        response headers
+    --trace-ascii % : staderr
+--verbose:
+        > : request headers
+        < : response headers
+        * : additional info provided by curl. 
+--include : only response headers
+
+
+
+              Enables a full trace dump of all incoming and outgoing
+              data, including descriptive information, to the given
+              output file. Use "-" as filename to have the output sent
+              to stdout. Use "%" as filename to have the output sent to
+              stderr.
+
+              If this option is used several times, the last one will be
+              used.
+
+              This option overrides -v, --verbose and --trace-ascii.
+              
+-i, --include
+              Include the HTTP response headers in the output. The HTTP
+              response headers can include things like server name,
+              cookies, date of the document, HTTP version and more...
+
+              To view the request headers, consider the -v, --verbose
+              option.
+
+
+-v, --verbose
+              Makes curl verbose during the operation. Useful for
+              debugging and seeing what's going on "under the hood". A
+              line starting with '>' means "header data" sent by curl,
+              '<' means "header data" received by curl that is hidden in
+              normal cases, and a line starting with '*' means
+              additional info provided by curl.
+
+              If you only want HTTP headers in the output, -i, --include
+              might be the option you're looking for.
+
+              If you think this option still doesn't give you enough
+              details, consider using --trace or --trace-ascii instead.
+
+              Use -s, --silent to make curl really quiet.
+
+              See also -i, --include. This option overrides --trace and
+              --trace-ascii.
+
+--no-progress-meter
+              Option to switch off the progress meter output without
+              muting or otherwise affecting warning and informational
+              messages like -s, --silent does.
+                You can thus use --progress-meter to enable the progress meter again.
+--stderr
+              Redirect all writes to stderr to the specified file
+              instead. If the file name is a plain '-', it is instead
+              written to stdout.
+
+-S, --show-error
+              When used with -s, --silent, it makes curl show an error
+              message if it fails
+-s, --silent
+              Silent or quiet mode. Don't show progress meter or error
+              messages.  Makes Curl mute. It will still output the data
+              you ask for, potentially even to the terminal/stdout
+              unless you redirect it.
+
+              Use -S, --show-error in addition to this option to disable
+              progress meter but still show error messages.
+
+=====
+vagrant@master-1:~/nfs/malathi/temp$ curl --trace-ascii - https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/master/deploy/install-driver.sh
+== Info:   Trying 151.101.40.133:443...
+== Info: Connected to raw.githubusercontent.com (151.101.40.133) port 443 (#0)
+== Info: ALPN, offering h2
+== Info: ALPN, offering http/1.1
+== Info: successfully set certificate verify locations:
+== Info:   CAfile: /etc/ssl/certs/ca-certificates.crt
+  CApath: none
+=> Send SSL data, 5 bytes (0x5)
+0000: .....
+== Info: TLSv1.3 (OUT), TLS handshake, Client hello (1):
+=> Send SSL data, 512 bytes (0x200)
+0000: ......A.g...d0..8.[....|........n..j.. ..8g....+..........C;.K..
+0040: *...-...>.......,.0.........+./...$.(.k.#.'.g.....9.....3.....=.
+0080: <.5./.....u.........raw.githubusercontent.com...................
+00c0: .....3t.........h2.http/1.1.........1.....*.(...................
+0100: ......................+........-.....3.&.$... .-L-m...0...#EnF..
+0140: .c.E]..m.....-..................................................
+0180: ................................................................
+01c0: ................................................................
+<= Recv SSL data, 5 bytes (0x5)
+0000: ....p
+== Info: TLSv1.3 (IN), TLS handshake, Server hello (2):
+<= Recv SSL data, 112 bytes (0x70)
+0000: ...l..MU:........B.o*TM?...q......w.. ..Y..^.u..D.S.c. 0..4=...
+0040: ,.j.w:../..$........................http/1.1....
+<= Recv SSL data, 5 bytes (0x5)
+0000: .....
+== Info: TLSv1.2 (IN), TLS handshake, Certificate (11):
+<= Recv SSL data, 3062 bytes (0xbf6)
+0000: .........40..00...........I>...7Z-....C..0...*.H........0p1.0...
+0040: U....US1.0...U....DigiCert Inc1.0...U....www.digicert.com1/0-..U
+0080: ...&DigiCert SHA2 High Assurance Server CA0...200506000000Z..220
+00c0: 414120000Z0j1.0...U....US1.0...U....California1.0...U....San Fra
+0100: ncisco1.0...U....GitHub, Inc.1.0...U....www.github.com0.."0...*.
+0140: H.............0.........>=.2}...\..w..g...).r6jA....9.,....QY...
+0180: ?..<....M....>...#.b.........U..rh..R.<.!..%'6.sC..vU^RH..\..6..
+01c0: .+....M..1.....E._+...2.8,).$...Z......b.@,..G...=.W.h..X.O....
+0200: "...7.W?;+..(........+}a5..C...:..}nS.8...4...........a/.......
+0240: v.sM..0.....F#.7}...............0...0...U.#..0...Qh.....u<..edb.
+0280: ..Yr;0...U.........iG..2.M..Eb_./.N:0{..U...t0r..www.github.com.
+02c0: .*.github.com..github.com..*.github.io..github.io..*.githubuserc
+0300: ontent.com..githubusercontent.com0...U...........0...U.%..0...+.
+0340: ........+.......0u..U...n0l04.2.0..http://crl3.digicert.com/sha2
+0380: -ha-server-g6.crl04.2.0..http://crl4.digicert.com/sha2-ha-server
+03c0: -g6.crl0L..U. .E0C07..`.H...l..0*0(..+.........https://www.digic
+0400: ert.com/CPS0...g.....0....+........w0u0$..+.....0...http://ocsp.
+0440: digicert.com0M..+.....0..Ahttp://cacerts.digicert.com/DigiCertSH
+0480: A2HighAssuranceServerCA.crt0...U.......0.0..}..+.....y......m...
+04c0: i.g.v.F.U.u.. 0...i..}.,At..I.....p.mG...q./.......G0E.!........
+0500: ........}...LQ..D......aH. .q&...!.RZ9..%...rQ..3o.3U.Q..:..u."E
+0540: E.YU$V.?./..m..#&c..K]..\n......q./.......F0D. f.8..6.......!~.
+0580: ..a...T`....}$S.. g>...H)..<..i......<......dn]i...v.Q.....y.Vm.
+05c0: 7x...z..'....B..........q./.......G0E. .?.I~L .Z.)..^..>o)..:.N.
+0600: ..q.c...!../7..Eu.P...mf.T.<....&.....z.W.0...*.H...............
+0640: ..?....n...Gfh..Y......K..H.s...&....\J..x...NI....^p..^.%.W....
+0680: t.T.6.......K.u.5.r.....;v....*T..$.O.z..HAd.yg...7..LeXe.4h.. .
+06c0: %]../.:...a.H...v>,.n...i}&.Y.}......G......K..k..a..eE!._.C...7
+0700: ..;lMb-c.....+a../5.9N)1.^.$[.._..b.............D..G80{r. ..x...
+0740: .0...0...............\..m.+B.]..0...*.H........0l1.0...U....US1.
+0780: 0...U....DigiCert Inc1.0...U....www.digicert.com1+0)..U..."DigiC
+07c0: ert High Assurance EV Root CA0...131022120000Z..281022120000Z0p1
+0800: .0...U....US1.0...U....DigiCert Inc1.0...U....www.digicert.com1/
+0840: 0-..U...&DigiCert SHA2 High Assurance Server CA0.."0...*.H......
+0880: .......0........../.$..m._...d..}"&e..B@.....v.>.0U...O..Z..UV..
+08c0: .*.....@...;r............C:.......@....M._W..Ph................-
+0900: ..........^DX*7..5...'2Z......Q.'..;B3..(..(...+#.x.{.^q.J>.....
+0940: ...#.M.....u.......D5eS%9....c...th.7..RH.9Z...]... .!..&o.J!A.
+0980: .m..H/....h.S/^.........I0..E0...U.......0.......0...U..........
+09c0: .0...U.%..0...+.........+.......04..+........(0&0$..+.....0...ht
+0a00: tp://ocsp.digicert.com0K..U...D0B0@.>.<.:http://crl4.digicert.co
+0a40: m/DigiCertHighAssuranceEVRootCA.crl0=..U. .60402..U. .0*0(..+...
+0a80: ......https://www.digicert.com/CPS0...U......Qh.....u<..edb...Yr
+0ac0: ;0...U.#..0....>.i...G...&....cd+.0...*.H...................m.\.
+0b00: .h.J...Q/.kD...c..nl.....q.[.4N..y.).-.j.. .y...G.....Yq}...k.YX
+0b40: =..1%\.8.......[.1N.x.....I..'..r.>..A...6...nGI^.H|....I..&B@.
+0b80: ....d.WT.....^k......r.V....0..0..N.W..$...+..u..-..}y'........
+0bc0: .... (AYC(......{;w.@b..AE....>..3.g.a.r..i...W@.p....
+<= Recv SSL data, 5 bytes (0x5)
+0000: ....,
+== Info: TLSv1.2 (IN), TLS handshake, Server key exchange (12):
+<= Recv SSL data, 300 bytes (0x12c)
+0000: ...(... ..t.............,....p....'I.........'...O.'.(T..f'4lj..
+0040: .e}.....wkm..z'.(C....4...........q.T..,.....4.....YK.}n.......q
+0080: wy#..@.LgC."......tUZ........x{.=....th...2..~..|...s..&vD.6l...
+00c0: 6c6U.;v..!J..h.....4.-nL.w..M....E.D...`-w...|....%....st.....d.
+0100: .....w6.s...`..*b.Np..D..>....V.Z`.K].......
+<= Recv SSL data, 5 bytes (0x5)
+0000: .....
+== Info: TLSv1.2 (IN), TLS handshake, Server finished (14):
+<= Recv SSL data, 4 bytes (0x4)
+0000: ....
+=> Send SSL data, 5 bytes (0x5)
+0000: ....%
+== Info: TLSv1.2 (OUT), TLS handshake, Client key exchange (16):
+=> Send SSL data, 37 bytes (0x25)
+0000: ...! .............9{...u........ge.$l
+=> Send SSL data, 5 bytes (0x5)
+0000: .....
+== Info: TLSv1.2 (OUT), TLS change cipher, Change cipher spec (1):
+=> Send SSL data, 1 bytes (0x1)
+0000: .
+=> Send SSL data, 5 bytes (0x5)
+0000: ....(
+== Info: TLSv1.2 (OUT), TLS handshake, Finished (20):
+=> Send SSL data, 16 bytes (0x10)
+0000: ........8te;LWaE
+<= Recv SSL data, 5 bytes (0x5)
+0000: .....
+<= Recv SSL data, 5 bytes (0x5)
+0000: ....(
+== Info: TLSv1.2 (IN), TLS handshake, Finished (20):
+<= Recv SSL data, 16 bytes (0x10)
+0000: ....Z.o..Z..S..
+== Info: SSL connection using TLSv1.2 / ECDHE-RSA-AES128-GCM-SHA256
+== Info: ALPN, server accepted to use http/1.1
+== Info: Server certificate:
+== Info:  subject: C=US; ST=California; L=San Francisco; O=GitHub, Inc.; CN=www.github.com
+== Info:  start date: May  6 00:00:00 2020 GMT
+== Info:  expire date: Apr 14 12:00:00 2022 GMT
+== Info:  subjectAltName: host "raw.githubusercontent.com" matched cert's "*.githubusercontent.com"
+== Info:  issuer: C=US; O=DigiCert Inc; OU=www.digicert.com; CN=DigiCert SHA2 High Assurance Server CA
+== Info:  SSL certificate verify ok.
+=> Send SSL data, 5 bytes (0x5)
+0000: .....
+=> Send header, 150 bytes (0x96)
+0000: GET /kubernetes-csi/csi-driver-nfs/master/deploy/install-driver.
+0040: sh HTTP/1.1
+004d: Host: raw.githubusercontent.com
+006e: User-Agent: curl/7.72.0
+0087: Accept: */*
+0094: 
+<= Recv SSL data, 5 bytes (0x5)
+0000: .....
+== Info: Mark bundle as not supporting multiuse
+<= Recv header, 17 bytes (0x11)
+0000: HTTP/1.1 200 OK
+<= Recv header, 24 bytes (0x18)
+0000: Connection: keep-alive
+<= Recv header, 22 bytes (0x16)
+0000: Content-Length: 1214
+<= Recv header, 28 bytes (0x1c)
+0000: Cache-Control: max-age=300
+<= Recv header, 81 bytes (0x51)
+0000: Content-Security-Policy: default-src 'none'; style-src 'unsafe-i
+0040: nline'; sandbox
+<= Recv header, 41 bytes (0x29)
+0000: Content-Type: text/plain; charset=utf-8
+<= Recv header, 74 bytes (0x4a)
+0000: ETag: "97e6c7469c7fcf13f9e5f898504f891596e9a8a52acd44f21b0efe0c2
+0040: 364abe5"
+<= Recv header, 45 bytes (0x2d)
+0000: Strict-Transport-Security: max-age=31536000
+<= Recv header, 33 bytes (0x21)
+0000: X-Content-Type-Options: nosniff
+<= Recv header, 23 bytes (0x17)
+0000: X-Frame-Options: deny
+<= Recv header, 33 bytes (0x21)
+0000: X-XSS-Protection: 1; mode=block
+<= Recv header, 45 bytes (0x2d)
+0000: Via: 1.1 varnish (Varnish/6.0), 1.1 varnish
+<= Recv header, 55 bytes (0x37)
+0000: X-GitHub-Request-Id: FE3E:0301:79259D:99B0A0:5FE80427
+<= Recv header, 22 bytes (0x16)
+0000: Accept-Ranges: bytes
+<= Recv header, 37 bytes (0x25)
+0000: Date: Sun, 27 Dec 2020 05:06:11 GMT
+<= Recv header, 33 bytes (0x21)
+0000: X-Served-By: cache-sjc10037-SJC
+<= Recv header, 20 bytes (0x14)
+0000: X-Cache: MISS, HIT
+<= Recv header, 20 bytes (0x14)
+0000: X-Cache-Hits: 0, 1
+<= Recv header, 37 bytes (0x25)
+0000: X-Timer: S1609045572.955420,VS0,VE1
+<= Recv header, 37 bytes (0x25)
+0000: Vary: Authorization,Accept-Encoding
+<= Recv header, 32 bytes (0x20)
+0000: Access-Control-Allow-Origin: *
+<= Recv header, 63 bytes (0x3f)
+0000: X-Fastly-Request-ID: dc31aa7ae82388837eae404568a85f0839f28dcb
+<= Recv header, 40 bytes (0x28)
+0000: Expires: Sun, 27 Dec 2020 05:11:11 GMT
+<= Recv header, 16 bytes (0x10)
+0000: Source-Age: 21
+<= Recv header, 2 bytes (0x2)
+0000: 
+<= Recv SSL data, 5 bytes (0x5)
+0000: .....
+<= Recv data, 1214 bytes (0x4be)
+0000: #!/bin/bash..# Copyright 2020 The Kubernetes Authors..#.# Licens
+0040: ed under the Apache License, Version 2.0 (the "License");.# you 
+0080: may not use this file except in compliance with the License..# Y
+00c0: ou may obtain a copy of the License at.#.#     http://www.apache
+0100: .org/licenses/LICENSE-2.0.#.# Unless required by applicable law 
+0140: or agreed to in writing, software.# distributed under the Licens
+0180: e is distributed on an "AS IS" BASIS,.# WITHOUT WARRANTIES OR CO
+01c0: NDITIONS OF ANY KIND, either express or implied..# See the Licen
+0200: se for the specific language governing permissions and.# limitat
+0240: ions under the License...set -euo pipefail..ver="master".if [[ "
+0280: $#" -gt 0 ]]; then.  ver="$1".fi..repo="https://raw.githubuserco
+02c0: ntent.com/kubernetes-csi/csi-driver-nfs/$ver/deploy".if [[ "$#" 
+0300: -gt 1 ]]; then.  if [[ "$2" == *"local"* ]]; then.    echo "use 
+0340: local deploy".    repo="./deploy".  fi.fi..if [ $ver != "master"
+0380:  ]; then.  repo="$repo/$ver".fi..echo "Installing NFS CSI driver
+03c0: , version: $ver ...".kubectl apply -f $repo/rbac-csi-nfs-control
+0400: ler.yaml.kubectl apply -f $repo/csi-nfs-driverinfo.yaml.kubectl 
+0440: apply -f $repo/csi-nfs-controller.yaml.kubectl apply -f $repo/cs
+0480: i-nfs-node.yaml.echo 'NFS CSI driver installed successfully.'.
+#!/bin/bash
+
+# Copyright 2020 The Kubernetes Authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+set -euo pipefail
+
+ver="master"
+if [[ "$#" -gt 0 ]]; then
+  ver="$1"
+fi
+
+repo="https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/$ver/deploy"
+if [[ "$#" -gt 1 ]]; then
+  if [[ "$2" == *"local"* ]]; then
+    echo "use local deploy"
+    repo="./deploy"
+  fi
+fi
+
+if [ $ver != "master" ]; then
+  repo="$repo/$ver"
+fi
+
+echo "Installing NFS CSI driver, version: $ver ..."
+kubectl apply -f $repo/rbac-csi-nfs-controller.yaml
+kubectl apply -f $repo/csi-nfs-driverinfo.yaml
+kubectl apply -f $repo/csi-nfs-controller.yaml
+kubectl apply -f $repo/csi-nfs-node.yaml
+echo 'NFS CSI driver installed successfully.'
+== Info: Connection #0 to host raw.githubusercontent.com left intact
+
+
+
+
+
+
+
+
+
+
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: nfs-storageclass
+provisioner: nfs-test # name can be anything
+parameters:
+  archiveOnDelete: "false"
+allowVolumeExpansion: true
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-nginx
+spec:
+  capacity:
+    storage: 100Mi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete
+  storageClassName: nfs-storageclass
+  mountOptions:
+    - hard
+    - nfsvers=4.1
+  csi:
+    driver: nfs.csi.k8s.io
+    readOnly: false
+    volumeHandle: unique-volumeid  # make sure it's a unique id in the cluster
+    volumeAttributes:
+      server: nfs-server.default.svc.cluster.local
+      share: /
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: pvc-nginx
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi
+  volumeName: pv-nginx
+  storageClassName: nfs-storageclass
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-nfs-example
+spec:
+  containers:
+  - image: nginx
+    name: nginx
+    ports:
+    - containerPort: 80
+      protocol: TCP
+    volumeMounts:
+      - mountPath: /var/www
+        name: pvc-nginx
+  volumes:
+  - name: pvc-nginx
+    persistentVolumeClaim:
+      claimName: pvc-nginx
