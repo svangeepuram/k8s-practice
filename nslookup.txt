@@ -1,0 +1,111 @@
+
+nslookup -query=A -domain=default.svc.cluster.local nginx-canary-v1 10.96.0.10
+
+192.168.133.195:80
+
+nslookup -query=A -domain=default.svc.cluster.local 192.168.133.195 10.96.0.10
+
+195.133.168.192.in-addr.arpa	name = 192-168-133-195.nfs-nginx.default.svc.cluster.local.
+195.133.168.192.in-addr.arpa	name = 192-168-133-195.nginx-canary-v1.default.svc.cluster.local.
+195.133.168.192.in-addr.arpa	name = 192-168-133-195.nginx-canary-v2.default.svc.cluster.local.
+
+nslookup -query=A -domain=default.svc.cluster.local 192-168-133-195.nginx-canary-v2. 10.96.0.10
+
+nslookup -query=SRV _http._tcp.192-168-133-195.nginx-canary-v2.default.svc.cluster.local 10.96.0.10
+
+
+
+nslookup -query=A 192-168-133-195.nginx-canary-v2.default.svc.cluster.local 10.96.0.10
+
+nslookup -query=SRV nginx-canary-v2.default.svc.cluster.local 10.96.0.10
+
+nginx-canary-v2.default.svc.cluster.local	service = 0 100 80 nginx-canary-v2.default.svc.cluster.local.
+
+nslookup -query=SRV _http._tcp.nginx-canary-v2.default.svc.cluster.local 10.96.0.10
+
+
+nslookup -query=SRV _web._tcp.nginx-canary-v2.default.svc.cluster.local 10.96.0.10
+Server:		10.96.0.10
+Address:	10.96.0.10#53
+
+_web._tcp.nginx-canary-v2.default.svc.cluster.local	service = 0 100 80 nginx-canary-v2.default.svc.cluster.local.
+
+nslookup - 10.96.0.10
+interactive mode with above name server
+
+==
+> set all
+Default server: 10.96.0.10
+Address: 10.96.0.10#53
+
+Set options:
+  novc			nodebug		nod2
+  search		recurse
+  timeout = 0		retry = 3	port = 53	ndots = 1
+  querytype = A       	class = IN
+  srchlist = hsd1.ca.comcast.net
+==
+
+Always use a virtual circuit when sending requests to the server.
+what is this ???
+
+
+=====
+> busybox
+Server:		10.96.0.10
+Address:	10.96.0.10#53
+
+------------
+    QUESTIONS:
+	busybox.hsd1.ca.comcast.net, type = A, class = IN
+    ANSWERS:
+    AUTHORITY RECORDS:
+    ->  hsd1.ca.comcast.net
+	origin = dns101.comcast.net
+	mail addr = dnsadmin.comcast.net
+	serial = 24446519
+	refresh = 7200
+	retry = 3600
+	expire = 604800
+	minimum = 7200
+	ttl = 30
+    ADDITIONAL RECORDS:
+------------
+** server can't find busybox.hsd1.ca.comcast.net: NXDOMAIN
+Server:		10.96.0.10
+Address:	10.96.0.10#53
+
+------------
+    QUESTIONS:
+	busybox, type = A, class = IN
+    ANSWERS:
+    AUTHORITY RECORDS:
+    ->  .
+	origin = a.root-servers.net
+	mail addr = nstld.verisign-grs.com
+	serial = 2020122701
+	refresh = 1800
+	retry = 900
+	expire = 604800
+	minimum = 86400
+	ttl = 30
+    ADDITIONAL RECORDS:
+------------
+** server can't find busybox: NXDOMAIN
+=====
+
+set domain default.cluster.local
+
+
+
+Name:	192-168-133-195.default.pod.cluster.local
+Address: 192.168.133.195
+
+_http._tcp.192-168-133-195.default.pod.cluster.local
+
+_web._tcp.nginx-canary-v2.default.pod.cluster.local
+
+192-168-133-196.default.pod.cluster.local
+
+
+_http._tcp.192-168-133-196.default.pod.cluster.local
