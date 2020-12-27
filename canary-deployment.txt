@@ -1,0 +1,138 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-canary-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 12
+  revisionHistoryLimit: 10
+  minReadySeconds: 5
+  strategy:
+    rollingUpdate:
+      maxSurge: 3
+      maxUnavailable: 3
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: 50m
+          limits:
+            cpu: 100m
+
+k apply --record -f dep1.yaml 
+
+kubectl expose deploy nginx-canary-deployment --type=NodePort --name nginx-canary-v1 --port=80 --target-port=80
+
+nginx-canary-v1     NodePort       10.108.36.51     <none>         80:31286/TCP       5s
+
+curl worker-1:31286
+
+k delete deploy nginx-canary-deployment
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-canary-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 12
+  revisionHistoryLimit: 10
+  minReadySeconds: 5
+  strategy:
+    rollingUpdate:
+      maxSurge: 3
+      maxUnavailable: 3
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: 50m
+          limits:
+            cpu: 100m
+
+==
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-canary-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 12
+  revisionHistoryLimit: 10
+  minReadySeconds: 5
+  strategy:
+    rollingUpdate:
+      maxSurge: 3
+      maxUnavailable: 3
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - name: http
+          containerPort: 80
+        resources:
+          requests:
+            cpu: 50m
+          limits:
+            cpu: 100m
+
+
+for i in {1..1000}
+do
+ echo counter : $i
+ curl worker-1:31286
+ sleep 2
+done
+
+kubectl expose deploy nginx-canary-deployment --type=ClusterIP --name nginx-canary-v2 --port=80 --target-port=http
+
+kubectl run busybox --image=busybox:1.28 -- sleep 1000
+
+kubectl exec busybox -it -- wget -qO- -T 5 nginx-canary-v2:http
+kubectl exec busybox -it -- wget -qO- -T 5 nginx-canary-v2:80
+
+both work - why?
+
+
+kubectl rollout undo deployment/nginx-canary-deployment
+
+
+kubectl exec busybox -it -- wget -qO- -T 5 nginx-canary-v2:http
+will not work, where as v2:80 would work ...
