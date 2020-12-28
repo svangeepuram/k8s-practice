@@ -1,1 +1,28 @@
 https://github.com/mmumshad/kubernetes-the-hard-way/blob/master/practice-questions-answers/cluster-maintenance/backup-etcd/etcd-backup-and-restore.md
+
+SNAPSHOT: 
+**********
+ETCDCTL_API=3 etcdctl --endpoints=https://127.0.0.1:2379 \
+--cacert=/etc/kubernetes/pki/etcd/ca.crt \
+--cert=/etc/kubernetes/pki/etcd/server.crt \
+--key=/etc/kubernetes/pki/etcd/server.key snapshot save /opt/etcd-backup.db
+
+Restore:
+********
+ETCDCTL_API=3 etcdctl  --data-dir /var/lib/etcd-from-backup \
+     snapshot restore /opt/snapshot-pre-boot.db
+
+
+Recovery:
+***********
+ETCDCTL_API=3 etcdctl --endpoints=https://127.0.0.1:2379 \
+--cacert=/etc/kubernetes/pki/etcd/ca.crt \
+--cert=/etc/kubernetes/pki/etcd/server.crt \
+--key=/etc/kubernetes/pki/etcd/server.key snapshot restore /opt/etcd-backup.db \ 
+--name=controlplane1 \
+--initial-cluster=controlplane1=https://127.0.0.1:2380 \
+--initial-cluster-token=etcd-cluster-1 \
+--initial-advertise-peer-urls=https://127.0.0.1:2380 \
+--data-dir=/var/lib/etcd-from-backup 
+
+
