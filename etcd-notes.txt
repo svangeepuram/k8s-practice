@@ -47,5 +47,30 @@ containers:
     - --peer-trusted-ca-file=/etc/kubernetes/pki/etcd/ca.crt
     - --snapshot-count=10000
     - --trusted-ca-file=/etc/kubernetes/pki/etcd/ca.crt
+    
+    ----
+    
+       9  apt install etcd-client
+   10  cd /etc/kubernetes/pki/etcd/
+   11  ls
+   12  ETCDCTL_API=3 etcdctl --endpoints=https://127.0.0.1:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/server.crt --key=/etc/kubernetes/pki/etcd/server.key snapshot save /opt/snapshot.db
+   13  ETCDCTL_API=3 etcdctl --endpoints=https://127.0.0.1:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/server.crt --key=/etc/kubernetes/pki/etcd/server.key snapshot restore  /opt/snapshot.db --name=controlplane1 --data-dir=/var/lib/etcd-from-backup --initial-cluster-token=etcd-cluster-1 --initial-advertise-peer-urls=https://127.0.0.1:2380 --initial-cluster=controlplane1=https://127.0.0.1:2380
+   14  clear
+   15  pwd
+   16  cd /etc/kubernetes/manifests/
+   17  ls
+   18  mv etcd.yaml ../.
+   19  mv kube-apiserver.yaml ../.
+   20  docker ps -a | grep etcd
+   21  rm -rf /var/lib/etcd/member/
+   22  cp -r /var/lib/etcd-from-backup/member/ /var/lib/etcd
+   23  ls
+   24  cd /etc/kubernetes/
+   25  ls
+   26  vi etcd.yaml
+   27  mv etcd.yaml /etc/kubernetes/manifests/
+   28  mv kube-apiserver.yaml /etc/kubernetes/manifests/
+   29  docker ps -a | grep etcd
+   30  watch kubectl get pods
 
 
