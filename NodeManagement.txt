@@ -1,0 +1,1 @@
+kubectl drain worker-1 --ignore-daemonsets --force --delete-emptydir-data 
