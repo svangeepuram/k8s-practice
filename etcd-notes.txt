@@ -74,5 +74,28 @@ containers:
    28  mv kube-apiserver.yaml /etc/kubernetes/manifests/
    29  docker ps -a | grep etcd
    30  watch kubectl get pods
+   
+   ----
+   containers:
+  - command:
+    - etcd
+    - --advertise-client-urls=https://172.17.0.8:2379
+    - --cert-file=/etc/kubernetes/pki/etcd/server.crt
+    - --client-cert-auth=true
+    - --data-dir=/var/lib/etcd-from-backup
+    - --initial-advertise-peer-urls=https://172.17.0.8:2380
+    - --initial-cluster=controlplane1=https://172.17.0.8:2380
+    - --key-file=/etc/kubernetes/pki/etcd/server.key
+    - --listen-client-urls=https://127.0.0.1:2379,https://172.17.0.8:2379
+    - --listen-metrics-urls=http://127.0.0.1:2381
+    - --listen-peer-urls=https://172.17.0.8:2380
+    - --name=controlplane1
+    - --initial-cluster-token=etcd-cluster-1
+    - --peer-cert-file=/etc/kubernetes/pki/etcd/peer.crt
+    - --peer-client-cert-auth=true
+    - --peer-key-file=/etc/kubernetes/pki/etcd/peer.key
+    - --peer-trusted-ca-file=/etc/kubernetes/pki/etcd/ca.crt
+    - --snapshot-count=10000
+    - --trusted-ca-file=/etc/kubernetes/pki/etcd/ca.crt
 
 
