@@ -1,1 +1,241 @@
-x
+k8s-upgrade.txt
+
+====
+
+apt update
+apt-cache madison kubeadm
+apt-get update && apt-get install -y --allow-change-held-packages kubeadm=1.17.16-00
+kubeadm version
+kubectl drain master-1 --ignore-daemonsets
+sudo kubeadm upgrade plan
+sudo kubeadm upgrade apply v1.17.16
+kubectl apply -f calico.yaml
+kubectl uncordon master-1
+apt-get update && apt-get install -y --allow-change-held-packages kubelet=1.17.16-00 kubectl=1.17.16-00
+sudo systemctl restart kubelet
+kubectl drain worker-1 --ignore-daemonsets --- run here okay ?
+  worker:
+  apt-get update && apt-get install -y --allow-change-held-packages kubeadm=1.17.16-00
+
+kubectl drain worker-1 --ignore-daemonsets
+  sudo kubeadm upgrade node
+  sudo apt-get update && sudo apt-get install -y --allow-change-held-packages kubelet=1.17.16-00 kubectl=1.17.16-00
+  sudo systemctl restart kubelet
+
+on master-1:
+kubectl uncordon worker-1
+kubectl get nodes
+====
+apt update
+apt-cache madison kubeadm
+
+kubeadm | 1.17.16-00 | https://apt.kubernetes.io kubernetes-xenial/main amd64 Packages
+
+apt-get update && \
+apt-get install -y --allow-change-held-packages kubeadm=1.17.16-00
+
+kubeadm version
+
+GitVersion:"v1.17.16"
+
+kubectl drain master-1 --ignore-daemonsets
+==
+node/master-1 cordoned
+WARNING: ignoring DaemonSet-managed Pods: kube-system/calico-node-ksjp5, kube-system/kube-proxy-hzghb
+evicting pod "coredns-5644d7b6d9-zlb29"
+evicting pod "calico-kube-controllers-6d4bfc7c57-wxdlf"
+evicting pod "coredns-5644d7b6d9-x68sp"
+pod/calico-kube-controllers-6d4bfc7c57-wxdlf evicted
+pod/coredns-5644d7b6d9-zlb29 evicted
+pod/coredns-5644d7b6d9-x68sp evicted
+node/master-1 evicted
+==
+
+
+sudo kubeadm upgrade plan
+
+==
+COMPONENT            CURRENT    AVAILABLE
+API Server           v1.16.15   v1.17.16
+Controller Manager   v1.16.15   v1.17.16
+Scheduler            v1.16.15   v1.17.16
+Kube Proxy           v1.16.15   v1.17.16
+CoreDNS              1.6.2      1.6.5
+Etcd                 3.3.15     3.4.3-0
+==
+
+sudo kubeadm upgrade apply v1.17.16
+==
+upgrade/staticpods] Waiting for the kubelet to restart the component
+[upgrade/staticpods] This might take a minute or longer depending on the component/version gap (timeout 5m0s)
+Static pod: kube-controller-manager-master-1 hash: c39f12c399142277864314914031324d
+Static pod: kube-controller-manager-master-1 hash: cf2ce668224b452d2c62542df2ada7dc
+[apiclient] Found 1 Pods for label selector component=kube-controller-manager
+[upgrade/staticpods] Component "kube-controller-manager" upgraded successfully!
+[upgrade/staticpods] Preparing for "kube-scheduler" upgrade
+[upgrade/staticpods] Renewing scheduler.conf certificate
+[upgrade/staticpods] Moved new manifest to "/etc/kubernetes/manifests/kube-scheduler.yaml" and backed up old manifest to "/etc/kubernetes/tmp/kubeadm-backup-manifests-2020-12-28-18-42-23/kube-scheduler.yaml"
+[upgrade/staticpods] Waiting for the kubelet to restart the component
+[upgrade/staticpods] This might take a minute or longer depending on the component/version gap (timeout 5m0s)
+Static pod: kube-scheduler-master-1 hash: dc675150aa3673437a278feada9047bb
+Static pod: kube-scheduler-master-1 hash: 0fc4768c7357dc7fa5c6cbacff11cd26
+[apiclient] Found 1 Pods for label selector component=kube-scheduler
+[upgrade/staticpods] Component "kube-scheduler" upgraded successfully!
+[upload-config] Storing the configuration used in ConfigMap "kubeadm-config" in the "kube-system" Namespace
+[kubelet] Creating a ConfigMap "kubelet-config-1.17" in namespace kube-system with the configuration for the kubelets in the cluster
+[kubelet-start] Downloading configuration for the kubelet from the "kubelet-config-1.17" ConfigMap in the kube-system namespace
+[kubelet-start] Writing kubelet configuration to file "/var/lib/kubelet/config.yaml"
+[bootstrap-token] configured RBAC rules to allow Node Bootstrap tokens to post CSRs in order for nodes to get long term certificate credentials
+[bootstrap-token] configured RBAC rules to allow the csrapprover controller automatically approve CSRs from a Node Bootstrap Token
+[bootstrap-token] configured RBAC rules to allow certificate rotation for all node client certificates in the cluster
+[addons]: Migrating CoreDNS Corefile
+[addons] Applied essential addon: CoreDNS
+[addons] Applied essential addon: kube-proxy
+
+[upgrade/successful] SUCCESS! Your cluster was upgraded to "v1.17.16". Enjoy!
+
+[upgrade/kubelet] Now that your control plane is upgraded, please proceed with upgrading your kubelets if you haven't already done so.
+
+=======
+
+kubectl apply -f calico.yaml
+
+kubectl uncordon master-1
+
+
+apt-get update && \
+apt-get install -y --allow-change-held-packages kubelet=1.17.16-00 kubectl=1.17.16-00
+
+
+
+
+sudo systemctl restart kubelet
+
+node:
+
+apt-get update && \
+apt-get install -y --allow-change-held-packages kubeadm=1.17.16-00
+
+
+kubectl drain worker-1 --ignore-daemonsets
+
+===
+node/worker-1 cordoned
+evicting pod "coredns-6955765f44-l2gct"
+evicting pod "calico-kube-controllers-6d4bfc7c57-272s7"
+evicting pod "coredns-6955765f44-52dwk"
+pod/calico-kube-controllers-6d4bfc7c57-272s7 evicted
+pod/coredns-6955765f44-52dwk evicted
+pod/coredns-6955765f44-l2gct evicted
+node/worker-1 evicted
+
+===
+on the worker-1:
+
+sudo kubeadm upgrade node
+===
+[upgrade] Reading configuration from the cluster...
+[upgrade] FYI: You can look at this config file with 'kubectl -n kube-system get cm kubeadm-config -oyaml'
+[upgrade] Skipping phase. Not a control plane node.
+[kubelet-start] Downloading configuration for the kubelet from the "kubelet-config-1.17" ConfigMap in the kube-system namespace
+[kubelet-start] Writing kubelet configuration to file "/var/lib/kubelet/config.yaml"
+[upgrade] The configuration for this node was successfully updated!
+[upgrade] Now you should go ahead and upgrade the kubelet package using your package manager.
+====
+
+
+sudo apt-get update && \
+sudo apt-get install -y --allow-change-held-packages kubelet=1.17.16-00 kubectl=1.17.16-00
+
+
+sudo systemctl restart kubelet
+
+on master-1:
+
+kubectl uncordon worker-1
+
+kubectl get nodes
+==========
+vagrant@master-1:~/calico$ kubectl get nodes
+NAME       STATUS   ROLES    AGE     VERSION
+master-1   Ready    master   7h15m   v1.17.16
+worker-1   Ready    <none>   7h12m   v1.17.16
+===========
+
+
+address: 0.0.0.0
+apiVersion: kubelet.config.k8s.io/v1beta1
+authentication:
+  anonymous:
+    enabled: false
+  webhook:
+    cacheTTL: 2m0s
+    enabled: true
+  x509:
+    clientCAFile: /etc/kubernetes/pki/ca.crt
+authorization:
+  mode: Webhook
+  webhook:
+    cacheAuthorizedTTL: 5m0s
+    cacheUnauthorizedTTL: 30s
+cgroupDriver: cgroupfs
+cgroupsPerQOS: true
+clusterDNS:
+- 10.96.0.10
+clusterDomain: cluster.local
+configMapAndSecretChangeDetectionStrategy: Watch
+containerLogMaxFiles: 5
+containerLogMaxSize: 10Mi
+contentType: application/vnd.kubernetes.protobuf
+cpuCFSQuota: true
+cpuCFSQuotaPeriod: 100ms
+cpuManagerPolicy: none
+cpuManagerReconcilePeriod: 10s
+enableControllerAttachDetach: true
+enableDebuggingHandlers: true
+enforceNodeAllocatable:
+- pods
+eventBurst: 10
+eventRecordQPS: 5
+evictionHard:
+  imagefs.available: 15%
+  memory.available: 100Mi
+  nodefs.available: 10%
+  nodefs.inodesFree: 5%
+evictionPressureTransitionPeriod: 5m0s
+failSwapOn: true
+fileCheckFrequency: 20s
+hairpinMode: promiscuous-bridge
+healthzBindAddress: 127.0.0.1
+healthzPort: 10248
+httpCheckFrequency: 20s
+imageGCHighThresholdPercent: 85
+imageGCLowThresholdPercent: 80
+imageMinimumGCAge: 2m0s
+iptablesDropBit: 15
+iptablesMasqueradeBit: 14
+kind: KubeletConfiguration
+kubeAPIBurst: 10
+kubeAPIQPS: 5
+makeIPTablesUtilChains: true
+maxOpenFiles: 1000000
+maxPods: 110
+nodeLeaseDurationSeconds: 40
+nodeStatusReportFrequency: 1m0s
+nodeStatusUpdateFrequency: 10s
+oomScoreAdj: -999
+podPidsLimit: -1
+port: 10250
+registryBurst: 10
+registryPullQPS: 5
+resolvConf: /etc/resolv.conf
+rotateCertificates: true
+runtimeRequestTimeout: 2m0s
+serializeImagePulls: true
+staticPodPath: /etc/kubernetes/manifests
+streamingConnectionIdleTimeout: 4h0m0s
+syncFrequency: 1m0s
+topologyManagerPolicy: none
+volumeStatsAggPeriod: 1m0s
+
+
