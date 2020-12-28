@@ -28,7 +28,7 @@ kubectl drain worker-1 --ignore-daemonsets --- run here okay ?
   sudo apt-get update && sudo apt-get install -y --allow-change-held-packages kubeadm=1.17.16-00
     sudo apt-get update && sudo apt-get install -y --allow-change-held-packages kubeadm=1.18.14-00
       sudo apt-get update && sudo apt-get install -y --allow-change-held-packages kubeadm=1.19.6-00
-         sudo apt-get update && sudo apt-get install -y --allow-change-held-packages kubeadm=1.120.1-00
+         sudo apt-get update && sudo apt-get install -y --allow-change-held-packages kubeadm=1.20.1-00
 
 kubectl drain worker-1 --ignore-daemonsets
   sudo kubeadm upgrade node
