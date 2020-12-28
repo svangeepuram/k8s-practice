@@ -27,5 +27,25 @@ kubectl get pods --all-namespaces -o go-template --template="{{range .items}}{{r
 
 kubectl get nodes -o jsonpath="{.items[*].status.conditions[*].type}"
 
+nodes that do not have labels:
+
+kubectl get nodes -o go-template='{{range .items }}{{if .metadata.labels }}{{else}}{{printf "%s\n" .metadata.name}}{{ end }}{{end
+
+pods that do not have lables:
+kubectl get pods --all-namespaces -o go-template='{{range .items }}{{if .metadata.labels }}{{else}}{{printf "%s\n" .metadata.name}}{{ end }}{{end}}'
+
+I could get the pods with labels using jsonpath by entering the following kubectl get pods --all-namespaces -o jsonpath='{.items[?(@.metadata.labels)].metadata.name}' But the following did not work kubectl get pods --all-namespaces -o jsonpath='{.items[?(!@.metadata.labels)].metadata.name}' 
+
+Note:
+Kubectl jsonpath parser does not support negation
+
+kubectl get nodes --selector=kubernetes.io/hostname!=node_host_name
+
+https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
+
+More reading: https://kubernetes.io/docs/concepts/overview/working-with-objects/field-selectors/
+
+
+
 
 
