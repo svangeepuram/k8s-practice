@@ -1,0 +1,100 @@
+newuser.txt
+
+https://askubuntu.com/questions/319714/proper-way-to-add-a-user-account-via-bash-script
+
+selinux:
+https://www.thegeekdiary.com/what-are-selinux-users-and-how-to-map-linux-users-to-selinux-users/
+
+
+sudo su -c "useradd mynewuser -s /bin/bash -m -g $PRIMARYGRP -G $MYGROUP"
+
+sudo chpasswd << 'END'
+mynewuser:password
+END
+
+echo mynewuser:password | sudo chpasswd
+
+sudo adduser myuser --gecos "First Last,RoomNumber,WorkPhone,HomePhone" --disabled-password
+
+Adding user `myuser' ...
+Adding new group `myuser' (1002) ...
+Adding new user `myuser' (1002) with group `myuser' ...
+Creating home directory `/home/myuser' ...
+Copying files from `/etc/skel' ...
+
+
+sudo useradd mynewuser1 -s /bin/bash -m -g 1002 -G 1000
+echo mynewuser1:password1 | sudo chpasswd
+
+create home dir
+default shell is bash
+primary group 1002 ===> should be preexisting
+suppl group 1000
+
+id mynewuser1
+uid=1003(mynewuser1) gid=1002(myuser) groups=1002(myuser),1000(vagrant)
+
+sudo useradd mynewuser1alias -s /bin/bash -m -u 1003 -g 1002 -G 1000
+echo mynewuser1alias:password1 | sudo chpasswd
+
+sudo useradd mynewuser1alias -s /bin/bash -m -u 1003 -g 1002 -G 1000
+useradd: UID 1003 is not unique
+
+sudo useradd mynewuser1alias -s /bin/bash -m -o -u 1003 -g 1002 -G 1000
+echo mynewuser1alias:password1 | sudo chpasswd
+
+id mynewuser1alias
+uid=1003(mynewuser1) gid=1002(myuser) groups=1002(myuser),1000(vagrant)
+
+vagrant@master-1:~$ id mynewuser1
+uid=1003(mynewuser1) gid=1002(myuser) groups=1002(myuser),1000(vagrant)
+
+=======
+
+  sudo useradd mynewuser2000 -s /bin/bash -M -u 2000 -N -g 1002 -G 1000
+  echo mynewuser2000:password1 | sudo chpasswd
+
+-M : no home dir
+uid 2000
+-N do not create default group 2000
+primary group 1002
+secondary group  1000
+
+id mynewuser2000
+uid=2000(mynewuser2000) gid=1002(myuser) groups=1002(myuser),1000(vagrant)
+vagrant@master-1:~$ ls /home
+mynewuser1  mynewuser1alias  myuser  ubuntu  vagrant
+
+sudo useradd mynewuser2000 -s /bin/bash -m -u 2000 -N -g 1002 -G 1000
+echo mynewuser2000:password1 | sudo chpasswd
+id mynewuser2000
+ls -ald /home/mynewuser2000
+
+sudo userdel mynewuser2000
+-r remove home dir files
+
+sudo useradd mynewuser2000 -s /bin/bash -m -u 2000 -N -g 1002 -G 1000
+echo mynewuser2000:password1 | sudo chpasswd
+id mynewuser2000
+ls -ald /home/mynewuser2000
+
+sudo userdel mynewuser2000
+ls -ald /home/mynewuser2000
+
+
+sudo userdel -r mynewuser2000
+ls -ald /home/mynewuser2000
+
+SElinux user:
+
+sudo apt install -y semanage-utils
+
+sudo apt install -y  policycoreutils-python-utils
+
+
+
+
+
+
+
+
