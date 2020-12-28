@@ -9,20 +9,43 @@ ETCDCTL_API=3 etcdctl --endpoints=https://127.0.0.1:2379 \
 
 Restore:
 ********
-ETCDCTL_API=3 etcdctl  --data-dir /var/lib/etcd-from-backup \
-     snapshot restore /opt/snapshot-pre-boot.db
+y
 
 
 Recovery:
 ***********
 ETCDCTL_API=3 etcdctl --endpoints=https://127.0.0.1:2379 \
---cacert=/etc/kubernetes/pki/etcd/ca.crt \
---cert=/etc/kubernetes/pki/etcd/server.crt \
---key=/etc/kubernetes/pki/etcd/server.key snapshot restore /opt/etcd-backup.db \ 
---name=controlplane1 \
---initial-cluster=controlplane1=https://127.0.0.1:2380 \
---initial-cluster-token=etcd-cluster-1 \
---initial-advertise-peer-urls=https://127.0.0.1:2380 \
---data-dir=/var/lib/etcd-from-backup 
+--cacert=/etc/kubernetes/pki/etcd/ca.crt \.    --trusted-ca-file=/etc/kubernetes/pki/etcd/ca.crt
+--cert=/etc/kubernetes/pki/etcd/server.crt \.   --cert-file=/etc/kubernetes/pki/etcd/server.crt
+--key=/etc/kubernetes/pki/etcd/server.key \    --key-file=/etc/kubernetes/pki/etcd/server.key
+--name=controlplane1 \.                           --name=master-1.   give a new name for new cluster
+--initial-cluster=controlplane1=https://127.0.0.1:2380 \.  --initial-cluster=master-1=https://192.168.5.11:2380.  give a new name for new master
+--initial-cluster-token=etcd-cluster-1 \                    -> add new line 
+--initial-advertise-peer-urls=https://127.0.0.1:2380 \     --initial-advertise-peer-urls=https://192.168.5.11:2380
+--data-dir=/var/lib/etcd-from-backup \                         --data-dir=/var/lib/etcd      -> change accordingly
+snapshot restore /opt/etcd-backup.db 
+
+Edit the blow etcd.yaml: 
+
+containers:
+  - command:
+    - etcd
+    - --advertise-client-urls=https://192.168.5.11:2379
+    - --cert-file=/etc/kubernetes/pki/etcd/server.crt
+    - --client-cert-auth=true
+    - --data-dir=/var/lib/etcd
+    - --initial-advertise-peer-urls=https://192.168.5.11:2380
+    - --initial-cluster=master-1=https://192.168.5.11:2380
+    - --key-file=/etc/kubernetes/pki/etcd/server.key
+    - --listen-client-urls=https://127.0.0.1:2379,https://192.168.5.11:2379
+    - --listen-metrics-urls=http://127.0.0.1:2381
+    - --listen-peer-urls=https://192.168.5.11:2380
+    - --name=master-1
+    - --peer-cert-file=/etc/kubernetes/pki/etcd/peer.crt
+    - --peer-client-cert-auth=true
+    - --peer-key-file=/etc/kubernetes/pki/etcd/peer.key
+    - --peer-trusted-ca-file=/etc/kubernetes/pki/etcd/ca.crt
+    - --snapshot-count=10000
+    - --trusted-ca-file=/etc/kubernetes/pki/etcd/ca.crt
 
 
