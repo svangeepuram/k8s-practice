@@ -2,20 +2,20 @@ k8s-upgrade.txt
 
 ====
 
-apt update
-apt-cache madison kubeadm
-apt-get update && apt-get install -y --allow-change-held-packages kubeadm=1.17.16-00
+sudo apt update
+sudo apt-cache madison kubeadm
+sudo apt-get update && sudo apt-get install -y --allow-change-held-packages kubeadm=1.17.16-00
 kubeadm version
 kubectl drain master-1 --ignore-daemonsets
 sudo kubeadm upgrade plan
 sudo kubeadm upgrade apply v1.17.16
 kubectl apply -f calico.yaml
 kubectl uncordon master-1
-apt-get update && apt-get install -y --allow-change-held-packages kubelet=1.17.16-00 kubectl=1.17.16-00
+sudo apt-get update && sudo apt-get install -y --allow-change-held-packages kubelet=1.17.16-00 kubectl=1.17.16-00
 sudo systemctl restart kubelet
 kubectl drain worker-1 --ignore-daemonsets --- run here okay ?
   worker:
-  apt-get update && apt-get install -y --allow-change-held-packages kubeadm=1.17.16-00
+  sudo apt-get update && sudo apt-get install -y --allow-change-held-packages kubeadm=1.17.16-00
 
 kubectl drain worker-1 --ignore-daemonsets
   sudo kubeadm upgrade node
