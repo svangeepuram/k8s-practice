@@ -3614,7 +3614,7 @@ spec:
               value: "k8s,bgp"
             # Auto-detect the BGP IP address.
             - name: IP_AUTODETECTION_METHOD
-              value: "interface=enp0s9"
+              value: "interface=enp0s8"
             - name: IP
               value: "autodetect"
             # Enable IPIP
@@ -3645,7 +3645,7 @@ spec:
             # chosen from this range. Changing this value after installation will have
             # no effect. This should fall within `--cluster-cidr`.
             - name: CALICO_IPV4POOL_CIDR
-              value: "192.168.5.0/24"
+              value: "192.168.0.0/16"
             # Disable file logging so `kubectl logs` works.
             - name: CALICO_DISABLE_FILE_LOGGING
               value: "true"
