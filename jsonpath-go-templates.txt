@@ -45,6 +45,14 @@ https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
 
 More reading: https://kubernetes.io/docs/concepts/overview/working-with-objects/field-selectors/
 
+pods that PVC in use:
+
+kubectl get pods --all-namespaces -o=json | jq -c \
+'.items[] | {name: .metadata.name, namespace: .metadata.namespace, claimName:.spec.volumes[] | select( has ("persistentVolumeClaim") ).persistentVolumeClaim.claimName }'
+
+However it will meet an error if the pod have no volumes, so I improves it by adding a has to check whether the volumes exists or not.
+
+kubectl get pods --all-namespaces -o=json | jq -c '.items[] | {name: .metadata.name, namespace: .metadata.namespace, claimName: .spec |  select( has ("volumes") ).volumes[] | select( has ("persistentVolumeClaim") ).persistentVolumeClaim.claimName }'
 
 
 
