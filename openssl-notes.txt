@@ -1,0 +1,63 @@
+https://superhero.ninja/2015/07/22/create-a-simple-https-server-with-openssl-s_server/
+
+openssl req -x509 -newkey rsa:2048 -keyout key.pem -out cert.pem -days 365 -nodes
+
+openssl s_server -key key.pem -cert cert.pem -accept 44330 -www
+Using default temp DH parameters
+ACCEPT
+
+https://localhost:44330
+
+
+openssl s_client -connect localhost:44330
+
+
+
+
+
+
+Explanation of the openssl req command
+openssl (OpenSSL command)
+req
+PKCS#10 certificate request and certificate generating utility.
+
+-x509
+this option outputs a self signed certificate instead of a certificate request. This is typically used to generate a test certificate or a self signed root CA. The extensions added to the certificate (if any) are specified in the configuration file. Unless specified using the set_serial option, a large random number will be used for the serial number.
+
+-newkey rsa:2048
+this option creates a new certificate request and a new private key. The argument takes one of several forms. rsa:nbits, where nbits is the number of bits, generates an RSA key nbits in size. If nbits is omitted, i.e. -newkey rsa specified, the default key size, specified in the configuration file is used.
+
+-keyout key.pem
+this gives the filename to write the newly created private key to. If this option is not specified then the filename present in the configuration file is used.
+
+-out cert.pem
+This specifies the output filename to write to or standard output by default.
+
+-days 365
+when the -x509 option is being used this specifies the number of days to certify the certificate for. The default is 30 days.
+
+-nodes
+if this option is specified then if a private key is created it will not be encrypted.
+
+Explanation of the openssl s_server command
+openssl
+s_server
+
+The s_server command implements a generic SSL/TLS server which listens for connections on a given port using SSL/TLS.
+
+-key key.pem
+
+The private key to use. If not specified then the certificate file will be used.
+
+-cert cert.pem
+
+The certificate to use, most servers cipher suites require the use of a certificate and some require a certificate with a certain public key type: for example the DSS cipher suites require a certificate containing a DSS (DSA) key. If not specified then the filename "server.pem" will be used.
+
+-accept 44330
+
+the TCP port to listen on for connections. If not specified 4433 is used.
+
+-www
+
+sends a status message back to the client when it connects. This includes lots of information about the ciphers used and various session parameters. The output is in HTML format so this option will normally be used with a web browser.
+
