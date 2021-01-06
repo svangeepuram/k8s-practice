@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: special-config
+  namespace: default
+data:
+  SPECIAL_LEVEL: very
+  SPECIAL_TYPE: charm
+  PRODUCER_DIR : producer
+  CONSUMER_DIR: consumer
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: volume-test-pod
+spec:
+  containers:
+    - name: container-config-volume
+      image: k8s.gcr.io/busybox
+      command: [ "/bin/sh", "-c", "ls /etc/config/ && sleep 1000" ]
+      volumeMounts:
+      - name: config-volume
+        mountPath: /etc/config
+    - name: container-config-volume-path
+      image: k8s.gcr.io/busybox
+      command: [ "/bin/sh","-c","cat /etc/config/keys && sleep 1000" ]
+      volumeMounts:
+      - name: config-volume-path
+        mountPath: /etc/config
+    - name: container-config-volume-dirs
+      image: k8s.gcr.io/busybox
+      command: [ "/bin/sh","-c","ls -lR /etc/config*/ && sleep 1000" ]
+      volumeMounts:
+      - name: config-volume-dirs
+        mountPath: /etc/config1
+        subPath: producer
+      - name: config-volume-dirs
+        mountPath: /etc/config2
+        subPath: consumer
+      - name: config-volume-file-mount
+        mountPath: /tmp/filemount.txt
+        subPath: leafnode.txt
+  volumes:
+    - name: downward-api-volume
+      hostPath:
+        path: /var/log/pods
+    - name: config-volume
+      configMap:
+        # Provide the name of the ConfigMap containing the files you want
+        # to add to the container
+        name: special-config
+    - name: config-volume-path
+      configMap:
+        name: special-config
+        items:
+        - key: SPECIAL_LEVEL
+          path: keys
+    - name: config-volume-dirs
+      configMap:
+        name: special-config
+        items:
+        - key: PRODUCER_DIR
+          path: dir1
+        - key: CONSUMER_DIR
+          path: dir2
+    - name: config-volume-file-mount
+      configMap:
+        name: special-config
+        items:
+        - key: PRODUCER_DIR
+          path: subdir
