@@ -1,8 +1,16 @@
 
+https://developers.google.com/web/updates/2017/05/devtools-release-notes#object-previews
 
 
 chrome://media-internals
+chrome://serviceworker-internals/?devtools
 
 publicly-accessible JavaScript source maps.
 
 CLS
+
+DevTools now display secure context
+  Cross-Origin-Embedder-Policy (COEP)
+  Cross-Origin-Opener-Policy (COOP) in the frame details.
+
+
