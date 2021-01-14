@@ -1,3 +1,36 @@
+Reference CRL,CRT,CSR,NEW CSR,PRIVATE KEY, PUBLIC KEY Parser
+
+CRL
+
+-----BEGIN X509 CRL-----
+-----END X509 CRL-----
+CRT
+
+-----BEGIN CERTIFICATE-----
+-----END CERTIFICATE-----
+CSR
+
+-----BEGIN CERTIFICATE REQUEST-----
+-----END CERTIFICATE REQUEST-----
+NEW CSR
+
+-----BEGIN NEW CERTIFICATE REQUEST-----
+-----END NEW CERTIFICATE REQUEST-----
+PEM
+
+-----BEGIN RSA PRIVATE KEY-----
+-----END RSA PRIVATE KEY-----
+PKCS7
+
+-----BEGIN PKCS7-----
+-----END PKCS7-----
+PRIVATE KEY
+
+-----BEGIN PRIVATE KEY-----
+-----END PRIVATE KEY-----
+
+
+
 https://superhero.ninja/2015/07/22/create-a-simple-https-server-with-openssl-s_server/
 
 openssl req -x509 -newkey rsa:2048 -keyout key.pem -out cert.pem -days 365 -nodes
