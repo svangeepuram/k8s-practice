@@ -1,0 +1,358 @@
+01.	కనకాంగి - బంగారమువంటి అంగములుగలది
+02.	రత్నాంగి - లత్నములవంటి అంగములుగలది
+03.	గానమూర్తి - మూర్తీభవించిన గానము
+04.	వనస్పతి - వనములకు అధిపతి
+05.	మానవతి - స్వాభిమానము గలది
+06.	తానరూపి - తానమునకు ప్రతిరూపము (తనుకీర్తి)
+07.	సేనావతి - సైన్యముగలది
+08.	హనుమత్తోడి - ? (జనతోడి)
+09.	ధేనుకా - ఆవు
+10.	నాటకప్రియా - నాటకములను మెచ్చునది
+11.	కోకిలప్రియా - కోకిలకే ప్రియమైనది
+12.	రూపవతి - మంచి రూపముగలది
+13.	గాయకప్రియా - గాయకులకు ప్రియమైనది
+14.	వకుళాభరణం - వకుళదేవికి ఆభరణమువంటిది (ధాటివసంతభైరవి)
+15.	మాయామాళవగౌళ - ?
+16.	చక్రవాకం - హంస (చక్రవాకపక్షి)
+17.	సూర్యకాంతం - సూర్యకాంతమణి
+18.	హాటకాంబరి - బంగారమువలె మెరియు వస్త్రములను ధరించినది
+19.	ఝంకారధ్వని - ఝంకారములవలె ఘల్లుమను ధ్వని ?
+20.	నఠభైరవి - భైరవీదేవి నాట్యమును స్ఫురించునది
+21.	కీరవాణి - చిలుకపలుకులవంటిది
+22.	ఖరహరప్రియ - ఖరహరప్రియునకు (రామునికి) ప్రియమైనది
+23.	గౌరీమనోహరి - పార్వతీదేవి మనసుదోచినది
+24.	వరుణప్రియా - వరుణదేవునికి ప్రియమైనది
+25.	మారరంజని - మన్మథునికి ప్రియమైనది
+26.	చారుకేశి - అందమైన కురుకుగలది
+27.	సరసాంగి - సరసమైన అంగములుగలది
+28.	హరికాంభోజి - ?
+29.	ధీరశంకరాభరణం - శంకరునికి అభరణమువంతిది
+30.	నాగానందిని - నాగదేవతను ఆనందింపజేయునది
+31.	యాగప్రియ - యాగములనిన మెచ్చునది
+32.	రాగవర్ధిని - రాగములను వర్ధిల్లజేయునది
+33.	గాంగేయభూషణి - గాంగేయునికి భూషణమువంటిది ?
+34.	వాగధీశ్వరి - వాక్కునకు అధిపతి
+35.	శూలిని - శులముగలది
+36.	చలనాట - ?
+37.	సాలగం -? (సౌగంధిని)
+38.	జలార్ణవం -సముద్రము
+39.	ఝాలవరాళి -సూర్యతాపముతోనున్న చంద్రుడు
+40.	నవనీతం - వెన్నవలె కరుగునది
+41.	పావని - పావనమైనది
+42.	రఘుప్రియా - రఘువంశజునికి ప్రియమైనది (రాముడు)
+43.	షడ్విధమార్గిణీ - ఆరుదారులలో నడుచునది
+44.	శుభపంతువరాళి - శుభకరుడగు చంద్రుడు
+45.	గవాంబోధి - గోనిలయం
+46.	సువర్ణాంగి - బంగారమువలె మెరియు అంగములుగలది
+47.	దివ్యమణి - దివ్యమైన మణిరత్నము
+48.	భవప్రియా - భవునికి (శంకరునికి) ప్రియమైనది
+49.	ధవళాంబరి - తెల్లని వస్త్రములు ధరించినది
+50.	నామనారాయణి - నారాయని అను పేరునవరలునది
+51.	కామవర్ధిని (పంతువరాళి) - కోరికలను పెంచునది
+52.	రామప్రియ - రామునకు ప్రియమైనది
+53.	గమనాశ్రమ - ? (గమకక్రియ)
+54.	విశ్వంభరి - విశ్వమునకు ఆధారమైన ఆదిశక్తి
+55.	శ్యామలాంగి - నల్లనిమేనుగలది
+56.	షణ్ముఖప్రియా - కుమారస్వామికి ప్రియమైనది
+57.	సింహేంద్రమధ్యమం - సింహరాజముల మధ్యనున్నది
+58.	హెమవతి - బంగారముగలది
+59.	ధర్మవతి - ధర్మమును పాలించునది
+60.	నీతిమతి - నీతివంతురాలు
+61.	కాంతామణి - స్త్రీలలోకెల్ల ఉత్తమురాలు
+62.	రిషభప్రియా - ఋషభమునకు ప్రియమైనది
+63.	లతాంగి - తీగవంటి నాజూకైన శరీరముగలది
+64.	వాచస్పతి - వాక్కును పాలించునది (సరస్వతి) [భూషవతి]
+65.	మేచకళ్యాణి - శుభకరమైనది
+66.	చిత్రాంబరి - చిత్రమైన వస్త్రములుధరించినది
+67.	సుచరిత్ర - మంచి చరిత్ర గలది
+68.	జ్యోతిస్వరూపిణి - దీపమునకు ప్రతిరూపము
+69.	ధాతువర్ధిని - ధాతువులను వర్ధిల్లజేయునది
+70.	కోసలం - కోసల / నేర్పరితనము
+71.	నాసికాభూషణి - ముక్కునదాల్చు భూషణమువంటిది
+72.	రసికప్రియా - రసికులకు ప్రియమైనది
+====
+01.	kanakAngi - bangAramuvanTi angamulugaladi
+02.	ratnAngi - latnamulavanTi angamulugaladi
+03.	gAnamUrti - mUrtIbhavincina gaanamu
+04.	vanaspati - vanamulaku adhipati
+05.	mAnavati - svAbhimAnamu galadi
+06.	tAnarUpi - tAnamunaku pratiroopamu (tanukIrti)
+07.	sEnAvati - sainyamugaladi
+08.	HanumattODi - ? (janatODi)
+09.	dhEnukA - aavu
+10.	nATakapriyA - nATakamulanu meccunadi
+11.	kOkilapriyA - kOkilakE priyamainadi
+12.	rUpavati - manci rUpamugaladi
+13.	gAyakapriyA - gAyakulaku priyamainadi
+14.	vakuLAbharaNam - vakuLadEviki AbharaNamuvanTidi (dhATivasantabhairavi)
+15.	mAyAmALavagowLa - ?
+16.	chakravAkam - hamsa (cakravAkapakshi)
+17.	sUryakAntam - sUryakaantamaNi
+18.	hATakAmbari - bangAramuvale meriyu vastramulanu dharincinadi
+19.	jhankAradhvani - jhankAramulavale ghallumanu dhvani ?
+20.	naThabhairavi - bhairavIdEvi naaTyamunu sphurincunadi
+21.	kIravANi - cilukapalukulavanTidi
+22.	kharaharapriya - kharaharapriyunaku (rAmuniki) priyamainadi
+23.	gowrImanOhari - pArvatIdEvi manasudOcinadi
+24.	varuNapriyA - varuNadEvuniki priyamainadi
+25.	mAraranjani - manmathuniki priyamainadi
+26.	chArukESi - andamaina kurukugaladi
+27.	sarasAngi - sarasamaina angamulugaladi
+28.	harikAmbhOji - ?
+29.	dhIraSankarAbharaNam - Sankaruniki abharaNamuvantidi
+30.	nAgAnandini - nAgadEvatanu AnandimpajEyunadi
+31.	yAgapriya - yAgamulanina meccunadi
+32.	rAgavardhini - rAgamulanu vardhillajEyunadi
+33.	gAngEyabhUshaNi - gAngEyuniki bhUshaNamuvanTidi ?
+34.	vAgadhISvari - vAkkunaku adhipati
+35.	SUlini - Sulamugaladi
+36.	chalanATa - ?
+37.	sAlagam -? (saugandhini)
+38.	jalArNavam -samudramu
+39.	JAlavarALi -sUryatApamutOnunna candruDu
+40.	navanItam - vennavale karugunadi
+41.	pAvani - paavanamainadi
+42.	raGupriyA - raGuvamSajuniki priyamainadi (rAmuDu)
+43.	shaDvidhamArgiNI - ArudArulalO naDucunadi
+44.	SubhapantuvarALi - SubhakaruDagu candruDu
+45.	gavAmbOdhi - gOnilayam
+46.	suvarNAngi - bangAramuvale meriyu angamulugaladi
+47.	divyamaNi - divyamaina maNiratnamu
+48.	bhavapriyA - bhavuniki (Sankaruniki) priyamainadi
+49.	dhavaLAmbari - tellani vastramulu dharincinadi
+50.	nAmanArAyaNi - nArAyani anu pErunavaralunadi
+51.	kAmavardhini (pantuvarALi) - kOrikalanu pencunadi
+52.	rAmapriya - rAmunaku priyamainadi
+53.	gamanASrama - ? (gamakakriya)
+54.	viSvambhari - viSvamunaku aadhaaramaina aadiSakti
+55.	SyAmalAngi - nallanimEnugaladi
+56.	shaNmuKapriyA - kumArasvAmiki priyamainadi
+57.	siMhEndramadhyamam - siMharaajamula madhyanunnadi
+58.	hemavati - bangAramugaladi
+59.	dharmavati - dharmamunu pAlincunadi
+60.	nItimati - nItivanturaalu
+61.	kAntAmaNi - strIlalOkella uttamuraalu
+62.	rishabhapriyA - Rshabhamunaku priyamainadi
+63.	latAngi - tIgavanTi nAjUkaina SarIramugaladi
+64.	vAcaspati - vAkkunu paalincunadi (sarasvati) [bhUshavati]
+65.	mEchakaLyANi - Subhakaramainadi
+66.	chitrAmbari - citramaina vastramuludharincinadi
+67.	sucharitra - manci caritra galadi
+68.	jyOtisvarUpiNi - dIpamunaku pratirUpamu
+69.	dhAtuvardhini - dhAtuvulanu vardhillajEyunadi
+70.	kOsalam - kOsala / nErparitanamu
+71.	nAsikAbhUshaNi - mukkunadAlcu bhUshaNamuvanTidi
+72.	rasikapriyA - rasikulaku priyamainadi
+
+===
+https://en.wikipedia.org/wiki/Glossary_of_Carnatic_music
+
+https://enacademic.com/dic.nsf/enwiki/3772308
+
+https://www.musictheoryacademy.com/category/understanding-music/
+
+https://en.wikipedia.org/wiki/Voice_type
+https://musiciantuts.com/what-is-timbre/
+
+https://commons.wikimedia.org/wiki/File:Melakarta.katapayadi.sankhya.72.devanagari.png
+
+In South Indian weddings it is a very prominently played raga. 
+The word Kalyani means she who causes auspicious things. 
+It is the 65th melakarta raga under the Katapayadi sankhya. It is also called Mechakalyani. 
+The notes for Kalyani are S R2 G3 M2 P D2 N3. Kalyani is the first Prathi Madhyama raga 
+that was ever discovered. It was obtained by the process of Graha Bhedam or modal shift of tonic of the ancient Shadja Grama.[1]
+
+Specifics on this raga
+Kalyani has scope for elaborate alapana. One should not remain too long on panchamam (pa) or alternate between shadjamam and panchamam too frequently. Kalyani is prominently known among the public. It is often performed at the beginning of concerts because it is considered auspicious.[1] This raga is very special because it is sung with all higher notes.
+
+Musical note: svaram
+  Name:
+  Sound
+  Number: saptakam : 7 : sa ri ga ma pa dha ni
+Tune: sur
+  tunefuless
+
+pitch :
+  relative pitch
+  interchangeables: ri-ga; dha-ni
+
+Octave:
+
+
+Timbre helps us identify what the particular sound source is 
+while tone refers to the combination of frequencies 
+and texture identifies the number of melodic lines that are present.
+
+scientific:
+
+Fundamental Period: T seconds
+All sinusoidal and many non-sinusoidal waveforms repeat exactly over time – they are periodic
+
+x(t) = x(t + T), t belongs to Real : Value of waveform at t
+
+Fundamental frequency f0 or f1 : 1/T = f per second : Hertz
+    In terms of a superposition of sinusoids, the fundamental frequency is the 
+    lowest frequency sinusoidal in the sum of harmonically related frequencies, 
+    or the frequency of the difference between adjacent frequencies
+first harmonic : f1
+second harmonic : f2 = 2.f1
+
+ = 4. L ( 
+If tube of length L with one end closed and the other end open
+wavelength of the fundamental harmonic : lambda = 4L
+If the ends of the same tube are now both closed or both opened as in the last two animations, 
+the wavelength of the fundamental harmonic becomes 2L.
+harmonic series (also overtone series)
+  {f0, f1,f2,f3}
+
+The piano, one of the most important instruments of western tradition, 
+contains a certain degree of inharmonicity among the frequencies generated by each string
+
+
+ Other pitched instruments, especially certain percussion instruments, 
+ such as marimba, vibraphone, tubular bells, timpani, and singing bowls 
+ contain mostly inharmonic partials, yet may give the ear a good sense of pitch because of a 
+ few strong partials that resemble harmonics. 
+ 
+ Unpitched, or indefinite-pitched instruments, such as cymbals and tam-tams make sounds 
+ (produce spectra) that are rich in inharmonic partials and may give 
+ no impression of implying any particular pitch.
+
+Formants:
+ effective length of vocal tract changed vowels.
+ There had to be some way to normalize the frequencies
+
+ A vowel, according to him, is a special acoustic phenomenon, 
+ depending on the intermittent production of a special partial, or “formant”, or “characteristique”. 
+ The frequency of the “formant” may vary a little without altering the character of the vowel. 
+ For a, for example, the “formant” may vary from 350 to 440 Hz even in the same person.[5]
+
+Phonetics
+Formants are distinctive frequency components of the acoustic signal produced by speech or singing. 
+The information that humans require to distinguish between speech sounds can be represented 
+purely quantitatively by specifying peaks in the amplitude or frequency spectrum. 
+Most of these formants are produced by tube and chamber resonance, but a few whistle tones 
+derive from periodic collapse of Venturi effect low-pressure zones.
+
+ The formant with the lowest frequency is called F1, the second F2, and the third F3. 
+ Most often the two first formants, F1 and F2, are sufficient to identify the vowel. 
+ The relationship between the perceived vowel quality and the first two formant frequencies can be 
+ appreciated by listening to "artificial vowels" that are generated by passing a click train 
+ (to simulate the glottal pulse train) through a pair of bandpass filters (to simulate vocal tract resonances).
+
+ If the fundamental frequency of the underlying vibration is higher than a resonance frequency of the system, 
+ then the formant usually imparted by that resonance will be mostly lost.
+
+musical tones :
+  Pitch - yama : not objective physical property, but subjective psychoacoustical attribute of sound
+          - pitch is such a close proxy for frequency, 
+          - it is almost entirely determined by how quickly the sound wave is making the air vibrate 
+          - pitch has almost nothing to do with the intensity, or amplitude, of the wave
+          - high" pitch means very rapid oscillation, and "low" pitch corresponds to slower oscillation
+          - corresponds very nearly to the repetition rate of periodic or nearly-periodic sounds
+          - corresponds to the reciprocal of the time interval between repeating similar events in the sound waveform
+          - Pitch depends to a lesser degree on the sound pressure level (loudness, volume) of the tone, 
+              especially at frequencies below 1,000 Hz and above 2,000 Hz.
+          - The pitch of lower tones gets lower as sound pressure increases
+
+  duration - 
+  loudness - sthaayi
+  timbre:
+    That attribute of auditory sensation which enables a listener to judge that two nonidentical sounds, 
+    similarly presented and having the same loudness and pitch, are dissimilar”
+    frequency spectrum and envelope determine timbre
+    imbre depends primarily upon the frequency spectrum, although it also depends upon the sound pressure and the temporal characteristics of the sound
+    The relative amplitudes (strengths) of the various harmonics primarily determine the timbre of different instruments and sounds,
+    Tone quality and tone color are synonyms for timbre, as well as the "texture attributed to a single instrument
+    components of timber:
+        Range between tonal and noiselike character - musical sound vs white noise in radio tuning
+        Spectral envelope - he overall amplitude structure of a sound
+        Time envelope in terms of rise, duration, and decay (ADSR, which stands for "attack, decay, sustain, release")
+        Changes both of spectral envelope (formant-glide) and fundamental frequency (micro-intonation)
+        Prefix, or onset of a sound, quite dissimilar to the ensuing lasting vibration
+
+==
+Subjective	                                    Objective
+Tonal character, usually pitched	              Periodic sound
+Noisy, with or without                          Noise, including random pulses characterized by
+  some tonal character,                             the rustle time 
+  including rustle noise	                          (the mean interval between pulses)
+Coloration	                                    Spectral envelope
+Beginning/ending	                              Physical rise and decay time
+Coloration glide or formant glide	              Change of spectral envelope
+Microintonation	                                Small change (one up and down) in frequency
+Vibrato	                                        Frequency modulation
+Tremolo	                                        Amplitude modulation
+Attack	                                        Prefix
+Final sound	                                    Suffix
+==
+instrument - note:
+  richness of sound : number of distinct frequencies
+  pitch produced: yama
+  name: pitch it produces is used to name the note
+  fundamental frequency : f1
+  The dominant frequency is the frequency that is most heard : fd = n*f1
+    and it is always a multiple of the fundamental frequency.
+  harmonics : { 0, f1, 2*f1,3*f1,4*f1}
+  complex tone : 2*fa1+3*fb3 + 0.09*fc4
+  harmonic partials = fa1,fb1
+  inhormonic partial : fc1
+  Other significant frequencies are called overtones of the fundamental frequency
+    overtones : 2*f1,3*f1,4*f1 ...
+
+all musical notes have an onset, but do not necessarily include an initial transient (abrupt short spike at the beginning).
+prefix of a sound is an initial phase, the onset of a sound quite dissimilar to the ensuing lasting vibration.
+
+audio:
+We use terms like transient, frequency, level, ratio, slew, phase, polarity, attack, decay, slope, etc not to seem cool but because they describe the things we are exchanging information about.
+
+Etymology: Latin transeunt-, transiens, present participle of transire to cross, pass by, from trans- + ire to go -- more at ISSUE
+1 a : passing especially quickly into and out of existence : TRANSITORY <transient beauty> b : passing through or by a place with only a brief stay or sojourn <transient visitors>
+2 : affecting something or producing results beyond itself
+- tran·sient·ly adverb
+synonyms TRANSIENT, TRANSITORY, EPHEMERAL, MOMENTARY, FUGITIVE, FLEETING, EVANESCENT mean lasting or staying only a short time. TRANSIENT applies to what is actually short in its duration or stay <a hotel catering primarily to transient guests>. TRANSITORY applies to what is by its nature or essence bound to change, pass, or come to an end <fame in the movies is transitory>. EPHEMERAL implies striking brevity of life or duration <many slang words are ephemeral>. MOMENTARY suggests coming and going quickly and therefore being merely a brief interruption of a more enduring state <my feelings of guilt were only momentary>. FUGITIVE and FLEETING imply passing so quickly as to make apprehending difficult <let a fugitive smile flit across his face> <fleeting moments of joy>. EVANESCENT suggests a quick vanishing and an airy or fragile quality <the story has an evanescent touch of whimsy that is lost in translation>.
+===============================
+taaLa: 
+| : laghuvu
+  l3: tripuTa
+  l4: maThya
+  l5: aTa
+  l7: jhampa
+O : dhRta
+U :  ardhadhRta + dhRta
+
+
+Eka :     l4
+
+rUpaka:   O l4
+
+tripuTa:  l3 O O
+
+maThya :  l4 O l4
+
+jhampa :  l7 U O
+
+dhRva:    l4 O l4 l4   
+
+aTa:      l5 l5 O O
+
+=============================
+
+
+
+Raagas:
+
+acala : natural notes: sa pa
+
+cala : variable notes : ri1 ri1 ga1 ga2  ma1 ma2 da1 da2 ni1 ni2
+
+Swaram and pitch possibilities
+sa - invariant
+ri1 r2  ri3 - Suddha, Chathusruti and Shatsruti.
+ga1 ga2 ga3 - Suddha, Sādhārana and Antara.
+ma1 ma2 - Suddha and Prati (Theevra)
+pa - Invariant
+dha1 dha2 dha3 - namely Suddha, Chathusruti and Shatshruti.
+ni1 ni2 ni3 - Suddha, Kaisiki and Kaakali.
+
+
