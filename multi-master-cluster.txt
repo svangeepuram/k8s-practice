@@ -1,3 +1,11 @@
+chmod 640 /etc/sudoers
+cat <<EOF | tee -a /etc/sudoers
+malathi ALL=(ALL) NOPASSWD: ALL
+EOF
+visudo -c
+chmod 440 /etc/sudoers
+
+
 kubeadm:
 
 sudo kubeadm config images pull
