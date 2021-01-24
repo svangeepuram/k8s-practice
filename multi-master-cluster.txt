@@ -1,9 +1,16 @@
+adduser --quiet --disabled-password --shell /bin/bash --gecos "ubuntu" ubuntu
+passwd ubuntu
+
+usermod -aG sudo ubuntu
+rsync --archive --chown=ubuntu:ubuntu ~/.ssh /home/ubuntu
+
 chmod 640 /etc/sudoers
 cat <<EOF | tee -a /etc/sudoers
-malathi ALL=(ALL) NOPASSWD: ALL
+ubuntu ALL=(ALL) NOPASSWD: ALL
 EOF
 visudo -c
 chmod 440 /etc/sudoers
+
 
 
 kubeadm:
